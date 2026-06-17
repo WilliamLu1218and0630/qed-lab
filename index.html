@@ -286,6 +286,29 @@ body[data-theme="cold"] .cardart{opacity:.2; mix-blend-mode:screen;}
   border:1px solid var(--line-soft); border-radius:10px; color:var(--muted); background:var(--parch); white-space:nowrap; transition:all .15s ease;}
 .reagent .slot.done{border-color:var(--gold); color:var(--ink2); background:var(--parch2); text-decoration:line-through; opacity:.65;}
 .reagent .slot.now{border-color:var(--gold); color:var(--ink); background:var(--glow); font-weight:700; box-shadow:0 0 0 2px var(--gold); opacity:1;}
+/* ============================== Proof export (print → PDF) ============================== */
+#proofdoc{display:none; color:#1a1206; background:#fff; font-family:'EB Garamond','Taipei Sans TC Beta','Noto Sans TC',serif; line-height:1.5;}
+#proofdoc .pd-head{text-align:center; border-bottom:2px solid #1a1206; padding-bottom:.8rem; margin-bottom:1.4rem;}
+#proofdoc .pd-latin{font-family:'Cormorant Garamond',serif; font-style:italic; letter-spacing:.08em; color:#6a5223; font-size:.95rem;}
+#proofdoc h1{font-family:'Cormorant Garamond',serif; font-size:1.9rem; margin:.2rem 0;}
+#proofdoc .pd-sub{font-family:'Taipei Sans TC Beta',sans-serif; font-size:.82rem; color:#6a5223;}
+#proofdoc .pd-floor{margin:1.2rem 0; break-inside:avoid;}
+#proofdoc .pd-ft{font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:700; border-left:3px solid #a87c1c; padding-left:.6rem; margin-bottom:.2rem;}
+#proofdoc .pd-claim{font-family:'Taipei Sans TC Beta',sans-serif; font-size:.9rem; margin:.15rem 0;}
+#proofdoc .pd-claim b{color:#7a1f16;}
+#proofdoc .pd-story{font-family:'Taipei Sans TC Beta',sans-serif; font-size:.8rem; color:#4f3c1a; margin:.1rem 0 .5rem;}
+#proofdoc ol.pd-steps{margin:.2rem 0 0 1.4rem; padding:0;}
+#proofdoc ol.pd-steps li{margin:.35rem 0; break-inside:avoid;}
+#proofdoc .pd-op{font-family:'Cormorant Garamond',serif; font-size:1rem; font-variant-numeric:tabular-nums;}
+#proofdoc .pd-op b{color:#7a1f16;}
+#proofdoc .pd-note{font-family:'Taipei Sans TC Beta',sans-serif; font-size:.72rem; color:#6a5223; margin-top:1px;}
+#proofdoc .pd-qed{text-align:right; font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:700; margin-top:1.6rem; border-top:2px solid #1a1206; padding-top:.6rem;}
+#proofdoc .pd-foot{font-family:'Taipei Sans TC Beta',sans-serif; font-size:.7rem; color:#9c906c; text-align:center; margin-top:.6rem;}
+@media print{
+  body>*:not(#proofdoc){display:none !important;}
+  #proofdoc{display:block !important; position:static; padding:0 6mm;}
+  @page{margin:14mm;}
+}
 </style>
 </head>
 <body data-theme="warm">
@@ -400,9 +423,15 @@ body[data-theme="cold"] .cardart{opacity:.2; mix-blend-mode:screen;}
     <h2 style="color:var(--gold)">證明完成</h2>
     <p class="cn">你還原了明文，走完整條推導之鏈。命題得證。</p>
     <div class="transcript" id="transcript"></div>
-    <button class="btn small disp" onclick="closeOverlays(); toMap()">返回大功業地圖</button>
+    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+      <button class="btn small disp" onclick="exportProof()">匯出證明 PDF</button>
+      <button class="btn small disp" onclick="closeOverlays(); toMap()">返回大功業地圖</button>
+    </div>
   </div>
 </div>
+
+<!-- printable proof transcript (screen-hidden; shown only by @media print) -->
+<div id="proofdoc"></div>
 
 <!-- transmutation vessel — floating drawer (no layout flow) -->
 <div class="vessel" id="vessel"></div>
@@ -1090,7 +1119,7 @@ const CHAPTERS = [
 
 // ============================== State ==============================
 let state=null, tokenCounter=0, victoryImmune=false, toastTimer=null;
-function freshRun(){ state={chapter:0, floor:0, energyBonus:0, undo:2, tokens:[], used:0, hand:[], pending:null, history:[], log:[], transcript:[], curInst:null}; }
+function freshRun(){ state={chapter:0, floor:0, energyBonus:0, undo:2, tokens:[], used:0, hand:[], pending:null, history:[], log:[], transcript:[], proofLog:[], curInst:null}; }
 function chapterDef(){ return CHAPTERS[state.chapter]; }
 function floorDefs(){ return chapterDef().floors; }
 function curDef(){ return floorDefs()[state.floor]; }
@@ -1100,7 +1129,7 @@ function loadFloor(n, reroll=true){
   if(reroll||!state.curInst) state.curInst=def.gen(def);
   const inst=state.curInst;
   state.tokens=inst.seeds.map(s=>({id:++tokenCounter, value:s.value, label:s.label, kind:s.kind}));
-  state.used=0; state.hand=def.hand.slice(); state.pending=null; state.history=[]; state.log=[];
+  state.used=0; state.hand=def.hand.slice(); state.pending=null; state.history=[]; state.log=[]; state.transcript=[];
   victoryImmune=true; setTimeout(()=>{victoryImmune=false;},1500);
   render();
 }
@@ -1228,24 +1257,24 @@ function doTransmute(){
   const p=state.pending; if(!p||!p.slots.every(Boolean)) return;
   const c=CARDS[p.cardId], res=c.resolve(p.slots);
   if(res&&res.error){ sfxError(); toast(res.error); state.justShake=p.cardId; render(); state.justShake=null; return; }
-  state.history.push({tokens:state.tokens.map(t=>({...t})), used:state.used, log:state.log.slice()});
+  state.history.push({tokens:state.tokens.map(t=>({...t})), used:state.used, log:state.log.slice(), transcript:state.transcript.slice()});
   state.used+=c.cost;
   const made=[]; (res.multi?res.multi:[res]).forEach(nt=>{ const t={id:++tokenCounter,value:nt.value,label:nt.label}; state.tokens.push(t); made.push(t); });
   const inL=p.slots.map(t=>t.label).join(', '), outL=made.map(t=>`${t.label} = ${fmtVal(t.value)}`).join('，');
   state.log.push(`<b>${c.name}</b>（${inL}）→ ${outL}`);
-  state.transcript.push(`${c.name}(${inL}) → ${outL}`);
+  state.transcript.push({cardId:p.cardId, card:c.name, ins:p.slots.map(t=>t.label), outs:made.map(t=>`${t.label} = ${fmtVal(t.value)}`)});
   state.justForged=made.map(t=>t.id); state.justCast=p.cardId; state.pending=null; render();
   emitForgeFx(made, EL[c.el].hex); sfxForge(c.el); state.justForged=null; state.justCast=null;
   checkVictory();
 }
 function doUndo(){
   if(state.undo<=0||state.history.length===0) return;
-  const s=state.history.pop(); state.tokens=s.tokens; state.used=s.used; state.log=s.log; state.undo--; state.pending=null;
+  const s=state.history.pop(); state.tokens=s.tokens; state.used=s.used; state.log=s.log; if(s.transcript) state.transcript=s.transcript; state.undo--; state.pending=null;
   tokenCounter=Math.max(0,...state.tokens.map(t=>t.id)); render();
 }
 function removeToken(id){
   if(state.pending) return;
-  state.history.push({tokens:state.tokens.map(t=>({...t})), used:state.used, log:state.log.slice()});
+  state.history.push({tokens:state.tokens.map(t=>({...t})), used:state.used, log:state.log.slice(), transcript:state.transcript.slice()});
   state.tokens=state.tokens.filter(t=>t.id!==id); render();
 }
 
@@ -1257,20 +1286,74 @@ function checkVictory(){
   if(matches.length>=(inst.winCount||1)){ goldBurst(matches[matches.length-1].id); sfxBell(); setTimeout(onFloorClear,820); return; }
   if(state.used+minHandCost()>energyMax()){ sfxError(); showOverlay('overlay-lose'); }
 }
+function stepLine(s){ return `${s.card}(${s.ins.join(', ')}) → ${s.outs.join('，')}`; }
 function onFloorClear(){
-  const def=curDef();
+  const def=curDef(), inst=state.curInst, ch=chapterDef();
+  // archive this cleared floor's derivation for the proof export
+  state.proofLog.push({chapter:ch.name, chapterOpus:ch.opus, name:def.name, opus:def.opus,
+    targetText:inst.targetText, story:inst.story, steps:state.transcript.slice()});
   if(def.boss){
     const ci=state.chapter, isLast=ci===CHAPTERS.length-1;
     setUnlocked(ci+1);
     const ov=document.getElementById('overlay-win');
-    ov.querySelector('.latin').textContent = isLast?'Magnum Opus · Q.E.D.':`${chapterDef().opus} · Demonstratum`;
-    ov.querySelector('h2').textContent = isLast?'大功業完成':`${chapterDef().name}之章 既成`;
+    ov.querySelector('.latin').textContent = isLast?'Magnum Opus · Q.E.D.':`${ch.opus} · Demonstratum`;
+    ov.querySelector('h2').textContent = isLast?'大功業完成':`${ch.name}之章 既成`;
     ov.querySelector('p').textContent = isLast?'你走完了整條推導之鏈。命題得證。':'此章既成，新章已解封。返回大功業地圖，續煉下一階。';
-    document.getElementById('transcript').innerHTML=state.transcript.map((s,i)=>`${i+1}. ${s}`).join('<br>');
+    document.getElementById('transcript').innerHTML=state.transcript.map((s,i)=>`${i+1}. ${stepLine(s)}`).join('<br>');
     showOverlay('overlay-win');
   } else showOverlay('overlay-reward');
 }
 function chooseReward(k){ if(k==='energy') state.energyBonus+=2; else state.undo+=2; closeOverlays(); loadFloor(state.floor+1); }
+
+// ============================== Proof export (annotated transcript → print/PDF) ==============================
+// Operation-level mathematical annotations, one per card kind (concrete values already shown in the step line).
+const CARD_NOTE={
+  modsq:'反覆平方：a² mod m，快速冪的基本步，使指數每次翻倍。',
+  modmul:'模乘：(a·b) mod m，模算術下的乘法。',
+  modpow:'模冪：以平方–乘法（快速冪）求 b^e mod m，僅需 O(log e) 次模乘。',
+  modadd:'模加：(a+b) mod m。',
+  modsub:'模減：(a−b) mod m，凱撒／仿射密碼的解密還原步。',
+  modinv:'模逆：a⁻¹ mod m，由擴展歐幾里得求得；存在 ⟺ gcd(a,m)=1。',
+  gcd:'歐幾里得演算法：輾轉相除求 gcd(a,b)。',
+  phi:'歐拉函數 φ(n)：與 n 互質的數的計數；n=pq 時 φ=(p−1)(q−1)。',
+  crt:'中國剩餘定理：互質模數下唯一合併出 x mod m₁m₂。',
+  fermat:'費馬小定理：p 為質數時 a^(p−1)≡1 (mod p)，故指數可模 (p−1) 約簡。',
+  mul:'整數乘法。',
+  dec:'減一：求 p−1，銜接歐拉函數 φ=(p−1)(q−1)。',
+  factor:'分解模數 n→p,q：RSA 安全性所倚賴的單向假設；分解成功即攻破。',
+  dlog:'離散對數：解 g^x≡h (mod p)。正向取冪易、反向求 x 難（DLP）。',
+  hash:'雜湊 H(m)：把訊息壓成固定範圍的指紋；簽章前先雜湊以防偽造。',
+  ptadd:'橢圓曲線點加 P⊕Q：過兩點的割線交曲線第三點，再對 x 軸鏡射。',
+  ptdbl:'倍點 2P：過 P 的切線交曲線另一點，再鏡射。',
+  scalarmul:'純量乘 kP：double-and-add。正向易算、反向（ECDLP）難。',
+  ecdlog:'橢圓曲線離散對數：由 kP=Q 反求純量 k，ECC 安全性的根基。',
+};
+function buildProofDoc(){
+  const log=state.proofLog||[]; if(!log.length) return false;
+  const chTitle=`${log[0].chapter}之章 · ${log[0].chapterOpus}`;
+  const d=new Date(), ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const floors=log.map(f=>{
+    const steps=f.steps.map(s=>{
+      const note=CARD_NOTE[s.cardId]||'';
+      return `<li><div class="pd-op"><b>${s.card}</b>（${s.ins.join(', ')}） ⟶ ${s.outs.join('，')}</div>${note?`<div class="pd-note">${note}</div>`:''}</li>`;
+    }).join('');
+    return `<div class="pd-floor"><div class="pd-ft">${f.opus} · ${f.name}</div>
+      <div class="pd-claim"><b>命題</b>　${f.targetText}</div>
+      <div class="pd-story">${f.story||''}</div>
+      <ol class="pd-steps">${steps}</ol></div>`;
+  }).join('');
+  document.getElementById('proofdoc').innerHTML=`
+    <div class="pd-head">
+      <div class="pd-latin">Quod Erat Demonstrandum</div>
+      <h1>證明轉錄 · ${chTitle}</h1>
+      <div class="pd-sub">qed-lab — 數論密室 · 每一步由 BigInt 引擎重放驗證</div>
+    </div>
+    ${floors}
+    <div class="pd-qed">∎ Q.E.D.</div>
+    <div class="pd-foot">匯出於 ${ds} · github.com/WilliamLu1218and0630/qed-lab</div>`;
+  return true;
+}
+function exportProof(){ if(!buildProofDoc()){ toast('尚無可匯出的推導紀錄'); return; } window.print(); }
 
 // ============================== Screens ==============================
 function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
