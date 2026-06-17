@@ -1,5 +1,7 @@
 # 數論密室 · 關卡施工藍圖（v2）
 
+> **本檔＝gen 函式的唯一規格來源（canonical）。** 28 關定案。LEVEL_BLUEPRINT 管敘事、GAME_ARCH 管玩法機制；逐關參數/盤面/手牌/謂詞/par 一律以本檔為準。v1→v2 對映見 `_scratch\qed_v1_v2_mapping.md`。DLP 兩段攻擊編號統一為 **3.3**。
+>
 > 把 [GAME_ARCH.md](GAME_ARCH.md) §11 四類 lineup × §12 Paar 題庫，落成**逐關可實作規格**。
 > 照此表寫 `gen` 函式：給 `seeds`（盤面）、`hand`（含誘餌）、`path`（算 par＋讓引擎自動算 target）、`goal`（謂詞）。
 > 參數刻意取小（模數多 <60，王關攻擊例外）。target 多由引擎跑 path 算出，不手填。
