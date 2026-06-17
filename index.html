@@ -158,6 +158,9 @@ button{font-family:inherit; cursor:pointer; color:inherit;}
 .panel.goal{border-left:5px solid var(--gold);}
 .goal .obj{font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); font-weight:700;}
 .goal .target{font-family:'Cormorant Garamond',serif; font-size:2.1rem; font-weight:700; color:var(--ink); margin-top:3px; line-height:1.1;}
+.goal .given{font-family:'Computer Modern Serif','EB Garamond','Taipei Sans TC Beta','Noto Sans TC',serif; font-size:1.04rem; color:var(--ink); margin-top:.55rem; line-height:1.5; letter-spacing:.01em;}
+.goal .given::before{content:'給定'; font-family:'Taipei Sans TC Beta',sans-serif; font-size:.6rem; letter-spacing:.18em; font-weight:700; color:var(--gold); margin-right:.5rem; vertical-align:.08em;}
+.goal .given:empty{display:none;}
 .goal .story{font-family:'Taipei Sans TC Beta',sans-serif; font-size:.9rem; color:var(--ink2); margin-top:.5rem; line-height:1.55;}
 
 /* board */
@@ -373,6 +376,7 @@ body[data-theme="cold"] .cardart{opacity:.2; mix-blend-mode:screen;}
         <div class="panel goal hatch">
           <div class="obj disp">Objective · 目標數</div>
           <div class="target disp" id="goal-target"></div>
+          <div class="given" id="goal-given"></div>
           <div class="story" id="goal-story"></div>
           <div class="verified cn" id="goal-verified"></div>
         </div>
@@ -478,6 +482,16 @@ function valEq(u,w){ // value equality across BigInt and point tokens
   return u.x===w.x && u.y===w.y;
 }
 function fmtVal(v){ if(typeof v==='bigint') return v.toString(); if(!isPt(v)) return String(v); return v.inf?'𝒪':`(${v.x}, ${v.y})`; }
+// 題目「給定值」一行：由 seeds 自動組出。已帶 name=value 標籤者直接用；模數 token 顯示「mod N」消歧；只有名稱的（EC 點 P/Q）補成 name=value。
+function givenLine(seeds){
+  if(!seeds||!seeds.length) return '';
+  return seeds.map(s=>{
+    const v=fmtVal(s.value);
+    if(s.label&&s.label.includes('=')) return s.label;       // a=6、n=91、p=23、m₁=1
+    if(s.label&&s.label!==v) return `${s.label}=${v}`;       // P → P=(5, 1)
+    return s.kind==='mod'?`mod ${v}`:v;                       // 裸標籤：24 ／ mod 13
+  }).join('、');
+}
 function ecOnCurve(P){ if(P.inf) return true; return mod(P.y*P.y,P.p)===mod(P.x*P.x*P.x+P.a*P.x+P.b,P.p); }
 function ecNeg(P){ return P.inf?P:{x:P.x,y:mod(-P.y,P.p),a:P.a,b:P.b,p:P.p}; }
 function ecAdd(P,Q){
@@ -1161,6 +1175,7 @@ function render(){
   document.getElementById('undo-count').textContent=state.undo;
   document.getElementById('btn-undo').disabled=(state.undo<=0||state.history.length===0);
   document.getElementById('goal-target').textContent=inst.targetText;
+  document.getElementById('goal-given').textContent=givenLine(inst.seeds);
   document.getElementById('goal-story').textContent=inst.story;
   document.getElementById('goal-verified').textContent=`引擎已驗證可解 · 最短 ${inst.minSteps} 步 · 耗預算 ${inst.minCost}`;
   renderVessel(); renderTokens(); renderHand(); renderLog();
