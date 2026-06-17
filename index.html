@@ -1163,7 +1163,9 @@ function loadFloor(n, reroll=true){
 function energyMax(){ return curDef().energy + state.energyBonus; }
 function minHandCost(){ return Math.min(...state.hand.map(id=>CARDS[id].cost)); }
 // ---- chapter unlock progress (localStorage) ----
-function getUnlocked(){ try{ return Math.max(0, parseInt(localStorage.getItem('qed-unlocked'))||0); }catch(e){ return 0; } }
+// 【測試旗標】DEV_UNLOCK_ALL=true → 地圖全章解鎖，方便逐章測試。正式發佈改回 false。
+const DEV_UNLOCK_ALL = true;
+function getUnlocked(){ try{ const s=Math.max(0, parseInt(localStorage.getItem('qed-unlocked'))||0); return DEV_UNLOCK_ALL ? Math.max(s, CHAPTERS.length) : s; }catch(e){ return DEV_UNLOCK_ALL ? CHAPTERS.length : 0; } }
 function setUnlocked(ci){ try{ if(ci>getUnlocked()) localStorage.setItem('qed-unlocked', String(ci)); }catch(e){} }
 
 // ============================== Rendering ==============================
