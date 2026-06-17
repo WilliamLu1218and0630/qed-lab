@@ -172,7 +172,11 @@ button{font-family:inherit; cursor:pointer; color:inherit;}
   background:radial-gradient(circle at 40% 33%, var(--parch2), var(--parch));
   border:2px solid var(--line); box-shadow:0 0 0 4px var(--panel), 0 0 0 5.4px var(--line-soft), 0 4px 10px rgba(0,0,0,.35);
   transition:transform .12s ease, box-shadow .2s ease;}
-.coin .v{position:relative; z-index:1; font-family:'Cormorant Garamond',serif; font-size:1.7rem; font-weight:700; color:var(--ink); line-height:1;}
+.coin .v{position:relative; z-index:1; font-family:'Cormorant Garamond',serif; font-size:1.7rem; font-weight:700; color:var(--ink); line-height:1; white-space:nowrap;}
+/* long values (EC points, 5+ digit numbers) shrink to stay inside the 78px coin */
+.coin .v.v-sm{font-size:1.4rem;}
+.coin .v.v-xs{font-size:1.15rem;}
+.coin .v.v-xxs{font-size:.95rem; letter-spacing:-.012em;}
 .coin .l{position:relative; z-index:1; font-family:'Taipei Sans TC Beta',sans-serif; font-size:.62rem; color:var(--muted); margin-top:1px; max-width:70px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:center;}
 .coin .rm{position:absolute; top:-7px; left:-7px; z-index:3; width:19px; height:19px; border-radius:50%; padding:0; line-height:1;
   background:var(--panel); border:1px solid var(--line-soft); color:var(--muted); font-size:.7rem;
@@ -1162,10 +1166,12 @@ function renderTokens(){
     const rm=!p?`<button class="rm" title="移除此物" aria-label="移除 ${t.label}" onclick="event.stopPropagation();removeToken(${t.id})">✕</button>`:'';
     const drag=p?` draggable="true" ondragstart="dragToken(event,${t.id})" ondragend="this.classList.remove('dragging')"`:'';
     const vtxt=fmtVal(t.value);
+    const vlen=[...vtxt].length; // code points: 𝒪 counts as 1, point "(x, y)" by its glyphs
+    const vsz=vlen<=4?'':vlen<=6?' v-sm':vlen<=7?' v-xs':' v-xxs'; // shrink long values (EC points / 5+ digits) to fit the coin
     const a11y=p?` role="button" tabindex="0" aria-label="${t.label}，值 ${vtxt}${isMod?'，模數':''}：拖入式中空格或點選填入下一格"`:'';
     const modchip=isMod?`<span class="modtag" aria-hidden="true">mod</span>`:'';
     const lhtml=(t.label!==vtxt)?`<span class="l" title="${t.label}">${t.label}</span>`:'';
-    return `<div class="${cls}" data-id="${t.id}"${drag}${a11y} onclick="onTokenClick(${t.id})">${ord}${rm}${modchip}<span class="v">${vtxt}</span>${lhtml}</div>`;
+    return `<div class="${cls}" data-id="${t.id}"${drag}${a11y} onclick="onTokenClick(${t.id})">${ord}${rm}${modchip}<span class="v${vsz}">${vtxt}</span>${lhtml}</div>`;
   }).join('');
 }
 function renderHand(){
