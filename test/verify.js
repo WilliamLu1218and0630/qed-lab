@@ -33,7 +33,7 @@ for (const ch of CHAPTERS) {
   for (const def of ch.floors) {
     resetFallback();
     let fail = 0;
-    for (let i = 0; i < N; i++) { if (!verifyInstance(def.gen({ energy: def.energy }))) fail++; }
+    for (let i = 0; i < N; i++) { if (!verifyInstance(def.gen(def))) fail++; }
     const fb = getFallback();
     totalFail += fail; totalFb += fb; floors++;
     const tag = (fail === 0 && fb === 0) ? 'OK ' : 'FAIL';
