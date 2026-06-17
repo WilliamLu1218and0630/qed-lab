@@ -1,9 +1,15 @@
 # 數論密室 · 章節關卡藍圖
 
+> **職責：本檔＝敘事/章節設計層（非 gen 規格）。** 逐關施工數值一律以 `LEVEL_SPEC.md`（canonical，28 關）為準；本檔僅供章節故事與煉金階段對照。
+> **狀態（2026-06-17）：v2 機制重構進行中（branch `v2-refactor`）**；下方「落地狀態」描述的是 v1（29 關，已凍結於 branch `v1-stable`）。v1→v2 對映見 `_scratch\qed_v1_v2_mapping.md`。
+>
 > 設計藍圖（非程式碼）。定案後再落地成 `index.html` 內的資料結構。
 > 來源課程：`F:\claude_code\cryptography`（ch1–ch13 + arithmetic/algebra + demos）。
 > 範圍：**數論 → 公鑰核心**（對稱密碼 DES/AES 偏位元操作，與「BigInt 數論卡牌」引擎不合拍，本作不收）。
 > 建立 2026-06-17。
+>
+> **機制／教學架構見 [`GAME_ARCH.md`](GAME_ARCH.md)（v2 重構）**：零能量記步數、謂詞勝利、破解兩段式、去公式化提示、why 閘題庫、四類分類體系、Paar 題庫對映。本檔管「章節內容」，GAME_ARCH 管「玩法邏輯」。
+> **逐關施工規格見 [`LEVEL_SPEC.md`](LEVEL_SPEC.md)**：28 關每關配好 Paar 題號＋小參數＋盤面／手牌／謂詞／par，照著寫 gen 函式。
 
 ## 落地狀態（2026-06-17）
 - **決策定案**：roguelike 編排採 **A 章節選單線性解鎖**；**ECC（Ch4）延後**補。

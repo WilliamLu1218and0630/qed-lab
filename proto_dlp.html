@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>黃化 · 破 DLP 原型｜步數＝難度量尺</title>
+<style>
+  :root{
+    --parch:#0d1016; --panel:#1c2230; --panel2:#222838; --ink:#f0e7cf; --ink2:#d4c69e;
+    --gold:#c9a84a; --line:#3a4256; --muted:#8a8aa0; --ok:#6fcaa0; --warn:#d98a5a; --hot:#e0603a;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:radial-gradient(120% 90% at 50% 0%, #161b27 0%, #0d1016 70%); color:var(--ink);
+    min-height:100vh; font-family:'Taipei Sans TC Beta','Noto Sans TC',sans-serif;
+    line-height:1.65; padding:2rem 1rem 4rem;
+  }
+  .wrap{max-width:860px; margin:0 auto;}
+  .disp{font-family:'Cormorant Garamond','EB Garamond',serif;}
+  .mono{font-family:'Computer Modern Serif',ui-monospace,monospace; font-variant-numeric:tabular-nums;}
+  h1{font-size:clamp(1.7rem,5vw,2.3rem); letter-spacing:.03em;}
+  .latin{font-family:'Cormorant Garamond',serif; letter-spacing:.3em; text-transform:uppercase; color:var(--gold); font-size:.95rem; margin-top:.2rem;}
+  .sub{color:var(--ink2); margin:.6rem 0 1.8rem; font-size:.95rem;}
+  .act{background:linear-gradient(180deg,var(--panel) 0%,var(--panel2) 100%); border:1px solid var(--line);
+       border-radius:14px; padding:1.4rem 1.5rem; margin-bottom:1.4rem; box-shadow:0 8px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);}
+  .act.locked{opacity:.42; filter:saturate(.4); pointer-events:none;}
+  .act-head{display:flex; align-items:baseline; gap:.7rem; margin-bottom:.3rem;}
+  .act-op{font-family:'Cormorant Garamond',serif; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); font-size:.72rem;}
+  .act-name{font-size:1.3rem; font-family:'Cormorant Garamond',serif; color:var(--ink);}
+  .scn{background:rgba(0,0,0,.25); border-left:3px solid var(--gold); border-radius:0 8px 8px 0;
+       padding:.7rem 1rem; margin:.8rem 0 1rem; font-size:.92rem; color:var(--ink2);}
+  .board{display:flex; flex-wrap:wrap; gap:.6rem; margin:1rem 0;}
+  .tok{background:#11151f; border:1px solid var(--line); border-radius:10px; padding:.55rem .9rem; min-width:74px; text-align:center;}
+  .tok .r{font-size:.62rem; color:var(--muted); letter-spacing:.04em;}
+  .tok .v{font-family:'Computer Modern Serif',serif; font-weight:700; font-size:1.3rem; color:var(--ink); font-variant-numeric:tabular-nums;}
+  .tok.goal{border-color:var(--gold); box-shadow:0 0 0 1px var(--gold) inset;}
+  .tok.goal .v{color:var(--gold);}
+  .row{display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; margin:.8rem 0;}
+  button{font-family:inherit; cursor:pointer; color:var(--ink); background:var(--panel2);
+          border:1px solid var(--line); border-radius:9px; padding:.55rem 1.1rem; font-size:.95rem; transition:transform .1s, filter .12s, background .12s;}
+  button:hover:not(:disabled){transform:translateY(-1px); filter:brightness(1.15);}
+  button:disabled{opacity:.4; cursor:default;}
+  button.gold{background:linear-gradient(180deg,#3a3315,#2a2410); border-color:var(--gold); color:var(--gold);}
+  button.hot{background:linear-gradient(180deg,#3a1d14,#2a160f); border-color:var(--hot); color:#f0a98e;}
+  input[type=number]{font-family:'Computer Modern Serif',monospace; font-size:1.05rem; width:5.5rem; padding:.45rem .6rem;
+       background:#0c0f17; border:1px solid var(--line); border-radius:8px; color:var(--ink); text-align:center;}
+  .counter{display:inline-flex; align-items:baseline; gap:.4rem; background:#0c0f17; border:1px solid var(--line);
+       border-radius:999px; padding:.4rem 1rem;}
+  .counter b{font-family:'Computer Modern Serif',monospace; font-size:1.6rem; color:var(--gold); font-variant-numeric:tabular-nums;}
+  .counter span{font-size:.78rem; color:var(--muted);}
+  .log{max-height:172px; overflow-y:auto; background:#0a0d14; border:1px solid var(--line); border-radius:9px;
+       padding:.5rem .8rem; font-family:'Computer Modern Serif',monospace; font-size:.9rem; color:var(--ink2); margin-top:.7rem;}
+  .log div{padding:.08rem 0; font-variant-numeric:tabular-nums;}
+  .log .hit{color:var(--ok); font-weight:700;}
+  .verdict{margin-top:1rem; padding:.9rem 1.1rem; border-radius:10px; font-size:.95rem; display:none;}
+  .verdict.show{display:block;}
+  .verdict.win{background:rgba(111,202,160,.12); border:1px solid var(--ok); color:#bde8d3;}
+  .teach{background:rgba(201,168,74,.1); border:1px dashed var(--gold); border-radius:10px; padding:.85rem 1.1rem; margin-top:1rem; font-size:.9rem; color:var(--ink2);}
+  .teach b{color:var(--gold);}
+  .cmp{display:grid; grid-template-columns:1fr 1fr; gap:.8rem; margin-top:1rem;}
+  .cmp .cell{background:#0c0f17; border:1px solid var(--line); border-radius:10px; padding:.8rem 1rem; text-align:center;}
+  .cmp .cell .big{font-family:'Computer Modern Serif',monospace; font-size:1.8rem; font-variant-numeric:tabular-nums;}
+  .cmp .cell.brute .big{color:var(--hot);} .cmp .cell.smart .big{color:var(--ok);}
+  .cmp .cell .lab{font-size:.78rem; color:var(--muted); margin-top:.2rem;}
+  .opt{display:block; width:100%; text-align:left; margin:.4rem 0;}
+  .opt.right{border-color:var(--ok); background:rgba(111,202,160,.12); color:#bde8d3;}
+  .opt.wrong{border-color:var(--hot); background:rgba(224,96,58,.1); opacity:.7;}
+  .qed{text-align:center; font-family:'Cormorant Garamond',serif; font-size:2rem; letter-spacing:.3em; color:var(--gold); margin-top:1.2rem; display:none;}
+  .hint-btn{font-size:.8rem; padding:.35rem .8rem; color:var(--muted); background:transparent; border-color:var(--line);}
+  .note{font-size:.82rem; color:var(--muted); margin-top:.5rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 class="disp">黃化 · 破 DLP</h1>
+    <div class="latin">Citrinitas — Step as the Ruler of Hardness</div>
+    <p class="sub">原型：驗證 v2 核心假設「<b>步數＝演算法難度的量尺</b>」。能量上限已拿掉，試錯免費；破解＝親手窮舉，步數計數器讓「難」被體感。離散對數：已知 g、p、h＝g<sup>x</sup> mod p，反求指數 x。</p>
+  </header>
+
+  <!-- ====================== 階段 A：親手窮舉 ====================== -->
+  <section class="act" id="actA">
+    <div class="act-head"><span class="act-op">Stage A · Brute Force</span><span class="act-name">親手窮舉（小參數）</span></div>
+    <div class="scn" id="scnA"></div>
+    <div class="board" id="boardA"></div>
+    <div class="row">
+      <button class="gold" id="crankA">⟳ 試下一個指數</button>
+      <span style="color:var(--muted);font-size:.85rem;">或跳著試：</span>
+      x = <input type="number" id="jumpA" min="1" value="1"> <button id="tryA">試這個</button>
+      <button class="hint-btn" id="resetA">重置</button>
+    </div>
+    <div class="row">
+      <span class="counter"><b id="stepsA">0</b><span>步</span></span>
+      <span class="note" id="noteA">每試一個候選 = +1 步。線性搜尋：最壞要試 p−1 個。</span>
+    </div>
+    <div class="log" id="logA"></div>
+    <div class="verdict" id="vA"></div>
+  </section>
+
+  <!-- ====================== 階段 B：演算法工具 ====================== -->
+  <section class="act locked" id="actB">
+    <div class="act-head"><span class="act-op">Stage B · Algorithm</span><span class="act-name">演算法工具（放大參數）</span></div>
+    <div class="scn" id="scnB"></div>
+    <div class="board" id="boardB"></div>
+    <div class="row">
+      <button id="crankB">⟳ 手搜試一個（感受看看）</button>
+      <span class="counter"><b id="stepsB">0</b><span>步 / 手搜</span></span>
+      <span class="note" id="noteB"></span>
+    </div>
+    <div class="row">
+      <button class="hot" id="bsgsB">🜔 用 BSGS 工具解（已解鎖）</button>
+      <span class="note">Baby-step / Giant-step：建表 √p 步 → 對撞 √p 步。</span>
+    </div>
+    <div class="log" id="logB"></div>
+    <div class="cmp" id="cmpB" style="display:none;">
+      <div class="cell brute"><div class="big" id="bruteN">–</div><div class="lab">手搜最壞步數　O(p)</div></div>
+      <div class="cell smart"><div class="big" id="smartN">–</div><div class="lab">BSGS 步數　O(√p)</div></div>
+    </div>
+    <div class="verdict" id="vB"></div>
+  </section>
+
+  <!-- ====================== why 閘 ====================== -->
+  <section class="act locked" id="actG">
+    <div class="act-head"><span class="act-op">Why Gate · Boss</span><span class="act-name">蓋章前的概念挑戰</span></div>
+    <div class="scn">把 DLP 的質數 p 從這裡的小數換成 <b>2048-bit</b>，用你剛玩的「逐一試指數」暴力法，最壞要試<b>幾次</b>？</div>
+    <div id="optsG"></div>
+    <div class="teach" id="teachG" style="display:none;"><b>教學點：</b>暴力搜索的步數約等於候選個數 p ≈ 2²⁰⁴⁸；步數隨「位元數」<b>指數</b>成長。你剛親手在 p=23 搖了十幾步、在 p=10007 看著手搜絕望——把同一把步數量尺外推到真實參數，就是「為什麼 DLP 安全」的體感證明。這就是 <span class="mono">step = 難度量尺</span> 的全部意義。</div>
+    <div class="qed" id="qed">∎ Q.E.D.</div>
+  </section>
+</div>
+
+<script>
+// ---------- 誠實 BigInt 數論 ----------
+function modpow(b,e,m){ b=((b%m)+m)%m; let r=1n; while(e>0n){ if(e&1n) r=r*b%m; b=b*b%m; e>>=1n; } return r; }
+function modinv(a,m){ let[g,x,a0,m0]=[0n,0n,((a%m)+m)%m,m]; let[old_r,r,old_s,s]=[a0,m0,1n,0n];
+  while(r!==0n){ const q=old_r/r; [old_r,r]=[r,old_r-q*r]; [old_s,s]=[s,old_s-q*s]; } return ((old_s%m0)+m0)%m0; }
+function isqrtCeil(n){ let m=1n; while(m*m<n) m++; return m; }
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+
+// ---------- 狀態 ----------
+let A={}, B={};
+
+// ====== 階段 A ======
+function initA(){
+  const p=23n, g=5n, x=BigInt(ri(7,18)), h=modpow(g,x,p);
+  A={p,g,x,h, xtry:0, steps:0, done:false};
+  document.getElementById('scnA').innerHTML=
+    `截獲：公開質數 <span class="mono">p=${p}</span>、基元 <span class="mono">g=${g}</span>、以及公開值 <span class="mono">h=${h}</span>＝g<sup>x</sup> mod p。沒有人告訴你公式——你只有「算 g 的某次方」這個正向工具。反求那個藏起來的指數 x。`;
+  document.getElementById('boardA').innerHTML=
+    tok('p（模數）',p)+tok('g（基元）',g)+tok('h = gˣ',h,true)+tok('x（要反求）','?');
+  document.getElementById('stepsA').textContent='0';
+  document.getElementById('logA').innerHTML='';
+  document.getElementById('vA').className='verdict';
+  document.getElementById('jumpA').value=1;
+  document.getElementById('crankA').disabled=false; document.getElementById('tryA').disabled=false;
+}
+function tok(role,val,goal){ return `<div class="tok${goal?' goal':''}"><div class="r">${role}</div><div class="v">${val}</div></div>`; }
+function tryExp(xv){
+  if(A.done) return;
+  A.steps++; document.getElementById('stepsA').textContent=A.steps;
+  const val=modpow(A.g,xv,A.p); const hit=val===A.h;
+  const log=document.getElementById('logA');
+  log.insertAdjacentHTML('beforeend',`<div class="${hit?'hit':''}">第 ${A.steps} 步：g^${xv} mod ${A.p} = ${val}${hit?'　← 命中 h！x = '+xv:''}</div>`);
+  log.scrollTop=log.scrollHeight;
+  if(hit){ winA(xv); }
+}
+function winA(xv){
+  A.done=true;
+  document.getElementById('crankA').disabled=true; document.getElementById('tryA').disabled=true;
+  document.getElementById('boardA').children[3].querySelector('.v').textContent=xv;
+  document.getElementById('boardA').children[3].classList.add('goal');
+  const v=document.getElementById('vA');
+  v.className='verdict win show';
+  v.innerHTML=`✔ 達標（謂詞 <span class="mono">inverts</span>：盤面出現 x 使 g<sup>x</sup>=h）。你花了 <b>${A.steps} 步</b>。<br>
+    p=23 時暴力可行——十幾步就能搖出來。<span style="color:var(--gold)">記住這個手感，下一階把 p 放大 400 倍再試。</span>`;
+  document.getElementById('teachA')?.remove();
+  unlock('actB'); initB();
+}
+
+// ====== 階段 B ======
+function initB(){
+  const p=10007n; let g=5n; const x=BigInt(ri(2000,9000)); const h=modpow(g,x,p);
+  B={p,g,x,h, xtry:0, steps:0, done:false};
+  document.getElementById('scnB').innerHTML=
+    `同樣的問題，參數放大：<span class="mono">p=${p}</span>、<span class="mono">g=${g}</span>、<span class="mono">h=${h}</span>＝g<sup>x</sup> mod p。先用手搜試幾下，感受一下——最壞要試 ${p-1n} 次。`;
+  document.getElementById('boardB').innerHTML=
+    tok('p（模數）',p)+tok('g（基元）',g)+tok('h = gˣ',h,true)+tok('x（要反求）','?');
+  document.getElementById('noteB').textContent=`最壞 ${p-1n} 步——手搖到天荒地老。`;
+}
+function crankB(){
+  if(B.done) return;
+  B.xtry++; B.steps++; document.getElementById('stepsB').textContent=B.steps;
+  const val=modpow(B.g,BigInt(B.xtry),B.p); const hit=val===B.h;
+  const log=document.getElementById('logB');
+  log.insertAdjacentHTML('beforeend',`<div class="${hit?'hit':''}">手搜第 ${B.steps} 步：g^${B.xtry} mod ${B.p} = ${val}${hit?'　← 命中（運氣爆棚）':''}</div>`);
+  log.scrollTop=log.scrollHeight;
+  if(B.steps===8 && !hit) log.insertAdjacentHTML('beforeend',`<div style="color:var(--warn)">…照這速度，平均還要約 ${(B.p-1n)/2n} 步。換工具吧。</div>`);
+  if(hit) winB(B.steps,'手搜');
+}
+function runBSGS(){
+  if(B.done) return;
+  const {p,g,h}=B; const n=p-1n; const m=isqrtCeil(n); let steps=0;
+  const table=new Map(); let e=1n;
+  for(let j=0n;j<m;j++){ table.set(e.toString(), j); e=e*g%p; steps++; }   // baby
+  const factor=modpow(modinv(g,p),m,p); let gamma=h%p; let found=null;
+  for(let i=0n;i<m;i++){ steps++; if(table.has(gamma.toString())){ found=i*m+table.get(gamma.toString()); break; } gamma=gamma*factor%p; }
+  const log=document.getElementById('logB');
+  log.insertAdjacentHTML('beforeend',
+    `<div class="hit">BSGS：建表 ${m} 步 + 對撞 ≤ ${m} 步 = 共 ${steps} 步 → 解出 x = ${found}　（驗證 g^${found} mod ${p} = ${modpow(g,found,p)} = h ✔）</div>`);
+  log.scrollTop=log.scrollHeight;
+  // 對比面板
+  document.getElementById('cmpB').style.display='grid';
+  document.getElementById('bruteN').textContent=(p-1n).toString();
+  document.getElementById('smartN').textContent=steps;
+  winB(steps,'BSGS', Number(p-1n));
+}
+function winB(steps,how,brute){
+  B.done=true;
+  document.getElementById('boardB').children[3].querySelector('.v').textContent=B.x;
+  document.getElementById('boardB').children[3].classList.add('goal');
+  document.getElementById('bsgsB').disabled=true; document.getElementById('crankB').disabled=true;
+  const v=document.getElementById('vB'); v.className='verdict win show';
+  const ratio=brute?Math.round(brute/steps):null;
+  v.innerHTML=`✔ 用 <b>${how}</b> 解出 x = ${B.x}，花了 <b>${steps} 步</b>。`+
+    (ratio?`<br>同一題手搜要 <span style="color:var(--hot)">${brute}</span> 步，BSGS 只要 <span style="color:var(--ok)">${steps}</span> 步——<b>${ratio}× 提速</b>。O(p) → O(√p) 的差距，被步數計數器一眼看穿。`:'');
+  unlock('actG');
+}
+
+// ====== why 閘 ======
+const GOPTS=[
+  {t:'約 2048 次', ok:false},
+  {t:'約 2048² ≈ 419 萬次', ok:false},
+  {t:'約 2²⁰⁴⁸ 次（天文數字）', ok:true},
+];
+function initG(){
+  const box=document.getElementById('optsG'); box.innerHTML='';
+  GOPTS.forEach((o,i)=>{
+    const b=document.createElement('button'); b.className='opt'; b.textContent=String.fromCharCode(65+i)+'.  '+o.t;
+    b.onclick=()=>{
+      if(o.ok){ b.classList.add('right'); [...box.children].forEach(x=>x.disabled=true);
+        document.getElementById('teachG').style.display='block';
+        document.getElementById('qed').style.display='block';
+        document.getElementById('qed').scrollIntoView({behavior:'smooth',block:'center'});
+      } else { b.classList.add('wrong'); b.disabled=true; }
+    };
+    box.appendChild(b);
+  });
+}
+
+// ====== 通用 ======
+function unlock(id){ document.getElementById(id).classList.remove('locked'); }
+document.getElementById('crankA').onclick=()=>{ A.xtry++; tryExp(BigInt(A.xtry)); document.getElementById('jumpA').value=A.xtry+1; };
+document.getElementById('tryA').onclick=()=>{ const v=BigInt(document.getElementById('jumpA').value||1); tryExp(v); };
+document.getElementById('resetA').onclick=initA;
+document.getElementById('crankB').onclick=crankB;
+document.getElementById('bsgsB').onclick=runBSGS;
+initA(); initB(); initG();
+</script>
+</body>
+</html>

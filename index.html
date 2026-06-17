@@ -44,7 +44,7 @@ button{font-family:inherit; cursor:pointer; color:inherit;}
 .screen.active{opacity:1; pointer-events:auto;}
 
 /* parchment backdrop (shared, themed via CSS vars) */
-.backdrop{position:fixed; inset:0; z-index:0; pointer-events:none;}
+.backdrop{position:fixed; inset:0; width:100%; height:100%; z-index:0; pointer-events:none;}
 .backdrop .fill-parch{fill:var(--parch);}
 .backdrop .ln{stroke:var(--line-soft); fill:none;}
 .backdrop .ln-bold{stroke:var(--line); fill:none;}
@@ -93,15 +93,10 @@ button{font-family:inherit; cursor:pointer; color:inherit;}
 .stage-name .opus{display:block; font-size:.66rem; letter-spacing:.28em; text-transform:uppercase; color:var(--gold); margin-top:3px;}
 .meter{font-size:.9rem; color:var(--muted);}
 .meter b{color:var(--ink); font-variant-numeric:tabular-nums;}
-.vial{display:inline-block; width:108px; height:11px; border:1.5px solid var(--line); margin-left:5px; vertical-align:middle; position:relative; background:var(--parch);}
-.vial-fill{position:absolute; left:0; top:0; bottom:0; background:var(--gold); transition:width .3s ease;}
 .spacer{flex:1;}
 
 
 /* static workbench tip — fixed height, never shifts */
-.board-tip{display:flex; align-items:center; gap:.5rem; min-height:2rem; margin-bottom:.55rem; padding:0 .2rem;
-  font-family:'Taipei Sans TC Beta',sans-serif; font-size:.85rem; color:var(--muted); line-height:1.4;}
-.board-tip b{color:var(--gold);}
 /* transmutation vessel — FLOATING bottom drawer; takes no layout flow, never pushes content down */
 .vessel{position:fixed; left:50%; bottom:16px; z-index:60; width:min(720px,calc(100vw - 28px));
   flex-direction:column; gap:.55rem; padding:.8rem 1rem .9rem;
@@ -161,6 +156,9 @@ button{font-family:inherit; cursor:pointer; color:inherit;}
 .panel.goal{border-left:5px solid var(--gold);}
 .goal .obj{font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); font-weight:700;}
 .goal .target{font-family:'Cormorant Garamond',serif; font-size:2.1rem; font-weight:700; color:var(--ink); margin-top:3px; line-height:1.1;}
+.goal .given{font-family:'Computer Modern Serif','EB Garamond','Taipei Sans TC Beta','Noto Sans TC',serif; font-size:1.04rem; color:var(--ink); margin-top:.55rem; line-height:1.5; letter-spacing:.01em;}
+.goal .given::before{content:'給定'; font-family:'Taipei Sans TC Beta',sans-serif; font-size:.6rem; letter-spacing:.18em; font-weight:700; color:var(--gold); margin-right:.5rem; vertical-align:.08em;}
+.goal .given:empty{display:none;}
 .goal .story{font-family:'Taipei Sans TC Beta',sans-serif; font-size:.9rem; color:var(--ink2); margin-top:.5rem; line-height:1.55;}
 
 /* board */
@@ -172,7 +170,11 @@ button{font-family:inherit; cursor:pointer; color:inherit;}
   background:radial-gradient(circle at 40% 33%, var(--parch2), var(--parch));
   border:2px solid var(--line); box-shadow:0 0 0 4px var(--panel), 0 0 0 5.4px var(--line-soft), 0 4px 10px rgba(0,0,0,.35);
   transition:transform .12s ease, box-shadow .2s ease;}
-.coin .v{position:relative; z-index:1; font-family:'Cormorant Garamond',serif; font-size:1.7rem; font-weight:700; color:var(--ink); line-height:1;}
+.coin .v{position:relative; z-index:1; font-family:'Cormorant Garamond',serif; font-size:1.7rem; font-weight:700; color:var(--ink); line-height:1; white-space:nowrap;}
+/* long values (EC points, 5+ digit numbers) shrink to stay inside the 78px coin */
+.coin .v.v-sm{font-size:1.4rem;}
+.coin .v.v-xs{font-size:1.15rem;}
+.coin .v.v-xxs{font-size:.95rem; letter-spacing:-.012em;}
 .coin .l{position:relative; z-index:1; font-family:'Taipei Sans TC Beta',sans-serif; font-size:.62rem; color:var(--muted); margin-top:1px; max-width:70px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:center;}
 .coin .rm{position:absolute; top:-7px; left:-7px; z-index:3; width:19px; height:19px; border-radius:50%; padding:0; line-height:1;
   background:var(--panel); border:1px solid var(--line-soft); color:var(--muted); font-size:.7rem;
@@ -242,11 +244,6 @@ button{font-family:inherit; cursor:pointer; color:inherit;}
 .ov-card h2{font-family:'Cormorant Garamond',serif; font-size:1.7rem; margin-bottom:.3rem;}
 .ov-card .latin{font-family:'Cormorant Garamond',serif; letter-spacing:.28em; text-transform:uppercase; font-size:.8rem; color:var(--gold);}
 .ov-card p{font-family:'Taipei Sans TC Beta',sans-serif; color:var(--muted); margin-top:.5rem;}
-.rewards{display:flex; gap:1rem; margin-top:1.3rem;}
-.reward{flex:1; position:relative; background:var(--parch); border:1.6px solid var(--line); padding:1rem .8rem; cursor:pointer; transition:transform .12s ease, box-shadow .2s ease;}
-.reward:hover{transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,.35);}
-.reward .rt{font-family:'Cormorant Garamond',serif; font-size:1.05rem; color:var(--gold);}
-.reward .rd{font-family:'Taipei Sans TC Beta',sans-serif; font-size:.8rem; color:var(--ink2); margin-top:.3rem;}
 .transcript{text-align:left; background:var(--parch); border:1px solid var(--line-soft); padding:.8rem 1rem; margin:1rem 0; max-height:230px; overflow-y:auto; font-family:'Taipei Sans TC Beta',sans-serif; font-size:.82rem; line-height:1.5; font-variant-numeric:tabular-nums;}
 
 #toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); z-index:80; background:var(--fac-d); color:#f6e3df; padding:.7rem 1.2rem; border:1px solid var(--el-fac); font-family:'Taipei Sans TC Beta',sans-serif; font-size:.9rem; opacity:0; pointer-events:none; transition:opacity .25s ease, transform .25s ease; box-shadow:0 6px 20px rgba(0,0,0,.5); max-width:90vw;}
@@ -328,7 +325,7 @@ body[data-theme="cold"] .cardart{opacity:.2; mix-blend-mode:screen;}
       <ul class="cn">
         <li>你逐步<b>推導</b>。檯上的圓牌是<b>數</b>，手中的卡是<b>數論運算</b>。</li>
         <li>取一運算 → 依指示點選檯上的數 → 算出新的數。每一步都<b>實際計算驗證</b>，不能蒙混。</li>
-        <li>算出<b>目標數</b>即過關。每步運算耗<b>推導預算</b>，預算用盡即失敗。</li>
+        <li>算出<b>目標數</b>即過關。可自由<b>回溯</b>與<b>重做</b>，試錯免費。結算時看你的步數與最佳解的對比。</li>
         <li>循<b>大功業地圖</b>逐章推導：數論質料 → 古典密碼 → 公鑰系統，章末迎<b>王關</b>。</li>
       </ul>
     </div>
@@ -357,12 +354,12 @@ body[data-theme="cold"] .cardart{opacity:.2; mix-blend-mode:screen;}
     <div class="banner hatch">
       <div class="stage-name disp" id="stage-name"></div>
       <span class="spacer"></span>
-      <span class="meter cn">推導預算 <b id="energy-text"></b><span class="vial"><span class="vial-fill" id="vial"></span></span></span>
-      <span class="meter cn">回溯 <b id="undo-count"></b></span>
+      <span class="meter cn"><b id="step-text">0 步</b></span>
       <button class="btn small disp" id="btn-undo" onclick="doUndo()">回溯</button>
       <button class="btn small disp" onclick="retryFloor()">重做</button>
       <button class="btn small disp" onclick="toggleTheme()">冷暖</button>
       <button class="btn small disp" id="btn-mute" onclick="toggleMute()">🔔</button>
+      <button class="btn small disp" onclick="showOverlay('overlay-help')" title="玩法說明" aria-label="玩法說明">？</button>
       <button class="btn small disp" onclick="toTitle()">離席</button>
     </div>
 
@@ -371,12 +368,12 @@ body[data-theme="cold"] .cardart{opacity:.2; mix-blend-mode:screen;}
         <div class="panel goal hatch">
           <div class="obj disp">Objective · 目標數</div>
           <div class="target disp" id="goal-target"></div>
+          <div class="given" id="goal-given"></div>
           <div class="story" id="goal-story"></div>
           <div class="verified cn" id="goal-verified"></div>
         </div>
         <div class="panel hatch">
           <h3>Termini · 工作檯</h3>
-          <div class="board-tip cn">取一張<b>運算卡</b> → 把檯上的數<b>拖入</b>嬗變槽（或<b>點選</b>依序填入）。</div>
           <div class="board">
             <div class="tokens" id="tokens"></div>
           </div>
@@ -395,32 +392,31 @@ body[data-theme="cold"] .cardart{opacity:.2; mix-blend-mode:screen;}
 </div>
 
 <!-- overlays -->
-<div class="overlay" id="overlay-reward">
+<div class="overlay" id="overlay-help">
+  <div class="ov-card">
+    <div class="latin">Regulae · 玩法</div>
+    <ul class="cn" style="text-align:left; margin:1.1rem 0 1.4rem; padding-left:1.2rem; line-height:1.7;">
+      <li>你逐步<b>推導</b>。檯上的圓牌是<b>數</b>，手中的卡是<b>數論運算</b>。</li>
+      <li>取一運算 → 把檯上的數<b>拖入</b>嬗變槽（或<b>點選</b>依序填入）→ 算出新的數。每一步都<b>實際計算驗證</b>，不能蒙混。</li>
+      <li>算出<b>目標數</b>即過關。可自由<b>回溯</b>與<b>重做</b>，試錯免費。結算時顯示你的步數與最佳解的對比。</li>
+      <li>循<b>大功業地圖</b>逐章推導：數論質料 → 古典密碼 → 公鑰系統，章末迎<b>王關</b>。</li>
+    </ul>
+    <button class="btn small disp" onclick="closeOverlays()">了解</button>
+  </div>
+</div>
+<div class="overlay" id="overlay-settle">
   <div class="ov-card">
     <div class="latin">Lemma Demonstratum</div>
     <h2 style="color:var(--gold)">此階既成</h2>
-    <p class="cn">擇一強化，帶往下一階。</p>
-    <div class="rewards">
-      <div class="reward hatch" role="button" tabindex="0" onclick="chooseReward('energy')"><div class="rt disp">推導預算 ＋2</div><div class="rd cn">往後每階多 2 點推導預算。</div></div>
-      <div class="reward hatch" role="button" tabindex="0" onclick="chooseReward('undo')"><div class="rt disp">回溯 ＋2</div><div class="rd cn">手誤時能逆轉一步推導。</div></div>
-    </div>
-  </div>
-</div>
-<div class="overlay" id="overlay-lose">
-  <div class="ov-card">
-    <div class="latin">Demonstratio Incompleta</div>
-    <h2 style="color:var(--el-fac)">推導預算耗盡</h2>
-    <p class="cn">推導預算耗盡而未完成。重排運算順序，再試。</p>
-    <div style="margin-top:1.2rem; display:flex; gap:.8rem; justify-content:center;">
-      <button class="btn small disp" onclick="closeOverlays(); retryFloor()">重做此階</button>
-      <button class="btn small disp" onclick="closeOverlays(); toTitle()">離席</button>
-    </div>
+    <div class="settle-line cn" style="margin:.6rem 0; color:var(--ink2)"></div>
+    <button class="btn small disp" onclick="nextFloor()" style="margin-top:.8rem">下一關</button>
   </div>
 </div>
 <div class="overlay" id="overlay-win">
   <div class="ov-card">
     <div class="latin">Q.E.D. · Quod Erat Demonstrandum</div>
     <h2 style="color:var(--gold)">證明完成</h2>
+    <div class="settle-line cn" style="margin:.4rem 0; color:var(--gold)"></div>
     <p class="cn">你還原了明文，走完整條推導之鏈。命題得證。</p>
     <div class="transcript" id="transcript"></div>
     <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
@@ -465,6 +461,36 @@ function valEq(u,w){ // value equality across BigInt and point tokens
   return u.x===w.x && u.y===w.y;
 }
 function fmtVal(v){ if(typeof v==='bigint') return v.toString(); if(!isPt(v)) return String(v); return v.inf?'𝒪':`(${v.x}, ${v.y})`; }
+// v2 predicate framework: goal = {type, value?, count?, ...}
+function evalPredicate(goal, board){
+  switch(goal.type){
+    case 'equals': return board.filter(t=>valEq(t.value,goal.value)).length>=(goal.count||1);
+    case 'tokensEqual': return false; // batch 3
+    case 'inverts': return false;     // batch 3
+    case 'forges': return false;      // batch 3
+    case 'impossible': return false;  // batch 4
+    default: return false;
+  }
+}
+function deriveGoal(inst){
+  if(inst.goal) return inst.goal;
+  return {type:'equals', value:inst.target, count:inst.winCount||1};
+}
+function isGoalHighlight(t, goal){
+  if(!goal) return false;
+  if(goal.type==='equals') return valEq(t.value, goal.value);
+  return false;
+}
+// 題目「給定值」一行：由 seeds 自動組出。已帶 name=value 標籤者直接用；模數 token 顯示「mod N」消歧；只有名稱的（EC 點 P/Q）補成 name=value。
+function givenLine(seeds){
+  if(!seeds||!seeds.length) return '';
+  return seeds.map(s=>{
+    const v=fmtVal(s.value);
+    if(s.label&&s.label.includes('=')) return s.label;       // a=6、n=91、p=23、m₁=1
+    if(s.label&&s.label!==v) return `${s.label}=${v}`;       // P → P=(5, 1)
+    return s.kind==='mod'?`mod ${v}`:v;                       // 裸標籤：24 ／ mod 13
+  }).join('、');
+}
 function ecOnCurve(P){ if(P.inf) return true; return mod(P.y*P.y,P.p)===mod(P.x*P.x*P.x+P.a*P.x+P.b,P.p); }
 function ecNeg(P){ return P.inf?P:{x:P.x,y:mod(-P.y,P.p),a:P.a,b:P.b,p:P.p}; }
 function ecAdd(P,Q){
@@ -603,11 +629,9 @@ function runPath(seeds, path){
 function verifyInstance(inst){
   const r=runPath(inst.seeds, inst.path);
   if(!r) return false;
-  // win = at least winCount tokens hold the target value (winCount=2 → 等值勝利，如 K_A==K_B / m'==H(m))
-  const need=inst.winCount||1;
-  if(r.toks.filter(t=>valEq(t.value,inst.target)).length<need) return false;
-  if(r.cost>inst.energy) return false;
-  inst.minSteps=inst.path.length; inst.minCost=r.cost;
+  inst.goal=deriveGoal(inst);
+  if(!evalPredicate(inst.goal, r.toks)) return false;
+  inst.par=inst.path.length;
   return true;
 }
 // roll until the verifier (real engine) confirms solvability; fixed seed = ultimate fallback
@@ -625,12 +649,12 @@ function genLemma1(def){
   return rollInstance(()=>{
     const m=pick(PRIMES_SM), a=BigInt(ri(2,Number(m)-1)), target=modpow(a,4n,m);
     if(target<=1n||target===a) return null;
-    return { energy:def.energy, target,
+    return { target,
       seeds:[{value:a,label:`${a}`},{value:m,label:`${m}`,kind:'mod'}],
       path:[{card:'modsq',in:[0,1]},{card:'modsq',in:[2,1]}],
       targetText:`${a}${sup(4)} mod ${m}`,
       story:`反覆平方使指數翻倍：兩次平方求出 ${a}⁴ mod ${m}。` };
-  }, { energy:def.energy, target:9n, seeds:[{value:7n,label:'7'},{value:13n,label:'13',kind:'mod'}],
+  }, { target:9n, seeds:[{value:7n,label:'7'},{value:13n,label:'13',kind:'mod'}],
        path:[{card:'modsq',in:[0,1]},{card:'modsq',in:[2,1]}], targetText:'7⁴ mod 13',
        story:'反覆平方使指數翻倍：兩次平方求出 7⁴ mod 13。' });
 }
@@ -642,13 +666,13 @@ function genTheorem(def){
     const e=pick(es), d=modinv(e,phi); if(d===null) return null;
     const M=BigInt(ri(2,Number(n)-1)); if(gcdBig(M,n)!==1n||M<=1n) return null;
     const c=modpow(M,e,n); if(c===M||c<=1n) return null;
-    return { energy:def.energy, target:M,
+    return { target:M,
       seeds:[{value:n,label:`n=${n}`,kind:'mod'},{value:e,label:`e=${e}`},{value:c,label:`c=${c}`}],
       path:[{card:'factor',in:[0]},{card:'dec',in:[3]},{card:'dec',in:[4]},
             {card:'mul',in:[5,6]},{card:'modinv',in:[1,7]},{card:'modpow',in:[2,8,0]}],
       targetText:'明文 M',
       story:`截獲密文 c=${c}，公鑰 (n=${n}, e=${e})。分解 n → 求 φ=(p−1)(q−1) → 求私鑰 d=e⁻¹ mod φ → 以 M=c^d mod n 還原明文。` };
-  }, { energy:def.energy, target:10n,
+  }, { target:10n,
        seeds:[{value:91n,label:'n=91',kind:'mod'},{value:5n,label:'e=5'},{value:82n,label:'c=82'}],
        path:[{card:'factor',in:[0]},{card:'dec',in:[3]},{card:'dec',in:[4]},
              {card:'mul',in:[5,6]},{card:'modinv',in:[1,7]},{card:'modpow',in:[2,8,0]}],
@@ -661,24 +685,24 @@ function genCh0gcd(def){
     const k=BigInt(ri(2,9)), x=BigInt(ri(2,12)), y=BigInt(ri(2,12));
     const a=k*x, b=k*y, target=gcdBig(a,b);
     if(target<2n||a===b) return null;
-    return { energy:def.energy, target,
+    return { target,
       seeds:[{value:a,label:`${a}`},{value:b,label:`${b}`}],
       path:[{card:'gcd',in:[0,1]}],
       targetText:`gcd(${a}, ${b})`,
       story:`輾轉相除：求 ${a} 與 ${b} 的最大公因數。` };
-  }, { energy:def.energy, target:6n, seeds:[{value:24n,label:'24'},{value:18n,label:'18'}],
+  }, { target:6n, seeds:[{value:24n,label:'24'},{value:18n,label:'18'}],
        path:[{card:'gcd',in:[0,1]}], targetText:'gcd(24, 18)', story:'輾轉相除：求 24 與 18 的最大公因數。' });
 }
 function genCh0inv(def){
   return rollInstance(()=>{
     const m=pick(PRIMES_SM), a=BigInt(ri(2,Number(m)-1)), inv=modinv(a,m);
     if(inv===null||inv<2n||inv===a) return null;
-    return { energy:def.energy, target:inv,
+    return { target:inv,
       seeds:[{value:a,label:`${a}`},{value:m,label:`${m}`,kind:'mod'}],
       path:[{card:'modinv',in:[0,1]}],
       targetText:`${a}${sup(-1)} mod ${m}`,
       story:`求 ${a} 在 mod ${m} 下的乘法逆元：使 ${a}·x ≡ 1。` };
-  }, { energy:def.energy, target:4n, seeds:[{value:3n,label:'3'},{value:11n,label:'11',kind:'mod'}],
+  }, { target:4n, seeds:[{value:3n,label:'3'},{value:11n,label:'11',kind:'mod'}],
        path:[{card:'modinv',in:[0,1]}], targetText:'3⁻¹ mod 11', story:'求 3 在 mod 11 下的乘法逆元：使 3·x ≡ 1。' });
 }
 function genCh0crt(def){
@@ -686,12 +710,12 @@ function genCh0crt(def){
     const mods=[[3n,5n],[3n,7n],[4n,5n],[5n,7n],[4n,9n],[3n,8n]], pr=pick(mods), m1=pr[0], m2=pr[1];
     const a1=BigInt(ri(1,Number(m1)-1)), a2=BigInt(ri(1,Number(m2)-1));
     const x=crt2(a1,m1,a2,m2); if(x===null||x<2n) return null;
-    return { energy:def.energy, target:x,
+    return { target:x,
       seeds:[{value:a1,label:`${a1}`},{value:m1,label:`${m1}`,kind:'mod'},{value:a2,label:`${a2}`},{value:m2,label:`${m2}`,kind:'mod'}],
       path:[{card:'crt',in:[0,1,2,3]}],
       targetText:`x ≡ ${a1}(${m1}), ${a2}(${m2})`,
       story:`孫子定理：求同時滿足 x≡${a1} (mod ${m1}) 與 x≡${a2} (mod ${m2}) 的最小非負整數。` };
-  }, { energy:def.energy, target:8n,
+  }, { target:8n,
        seeds:[{value:2n,label:'2'},{value:3n,label:'3',kind:'mod'},{value:3n,label:'3'},{value:5n,label:'5',kind:'mod'}],
        path:[{card:'crt',in:[0,1,2,3]}], targetText:'x ≡ 2(3), 3(5)',
        story:'孫子定理：求同時滿足 x≡2 (mod 3) 與 x≡3 (mod 5) 的最小非負整數。' });
@@ -701,12 +725,12 @@ function genCh0phi(def){
     const ps=[3n,5n,7n,11n,13n], p=pick(ps); let q=pick(ps); if(q===p) return null;
     const n=p*q, target=eulerPhi(n);
     if(target<2n) return null;
-    return { energy:def.energy, target,
+    return { target,
       seeds:[{value:n,label:`${n}`}],
       path:[{card:'phi',in:[0]}],
       targetText:`φ(${n})`,
       story:`歐拉函數：求小於 ${n} 且與 ${n} 互質的整數個數。分解 ${n} 即知 φ。` };
-  }, { energy:def.energy, target:8n, seeds:[{value:15n,label:'15'}],
+  }, { target:8n, seeds:[{value:15n,label:'15'}],
        path:[{card:'phi',in:[0]}], targetText:'φ(15)', story:'歐拉函數：求小於 15 且與 15 互質的整數個數。分解 15 即知 φ。' });
 }
 // ---- Ch1 黑化（古典密碼） ----
@@ -714,12 +738,12 @@ function genCaesar(def){
   return rollInstance(()=>{
     const m=BigInt(ri(1,25)), k=BigInt(ri(1,25)), c=mod(m+k,26n);
     if(c===m) return null;
-    return { energy:def.energy, target:m,
+    return { target:m,
       seeds:[{value:c,label:`c=${c}`},{value:k,label:`k=${k}`},{value:26n,label:'26',kind:'mod'}],
       path:[{card:'modsub',in:[0,1,2]}],
       targetText:'明文字母序 m',
       story:`凱撒密碼：密文字母序 c=${c}，金鑰位移 k=${k}。還原 m=(c−k) mod 26。` };
-  }, { energy:def.energy, target:7n, seeds:[{value:10n,label:'c=10'},{value:3n,label:'k=3'},{value:26n,label:'26',kind:'mod'}],
+  }, { target:7n, seeds:[{value:10n,label:'c=10'},{value:3n,label:'k=3'},{value:26n,label:'26',kind:'mod'}],
        path:[{card:'modsub',in:[0,1,2]}], targetText:'明文字母序 m',
        story:'凱撒密碼：密文字母序 c=10，金鑰位移 k=3。還原 m=(c−k) mod 26。' });
 }
@@ -729,12 +753,12 @@ function genAffine(def){
     const ainv=modinv(a,26n); if(ainv===null) return null;
     const c=mod(a*m+b,26n), target=m;
     if(c===m) return null;
-    return { energy:def.energy, target,
+    return { target,
       seeds:[{value:a,label:`a=${a}`},{value:b,label:`b=${b}`},{value:c,label:`c=${c}`},{value:26n,label:'26',kind:'mod'}],
       path:[{card:'modinv',in:[0,3]},{card:'modsub',in:[2,1,3]},{card:'modmul',in:[4,5,3]}],
       targetText:'明文字母序 m',
       story:`仿射密碼：c=(a·m+b) mod 26，金鑰 a=${a}, b=${b}，密文 c=${c}。還原 m=a⁻¹(c−b) mod 26。` };
-  }, { energy:def.energy, target:7n,
+  }, { target:7n,
        seeds:[{value:5n,label:'a=5'},{value:8n,label:'b=8'},{value:17n,label:'c=17'},{value:26n,label:'26',kind:'mod'}],
        path:[{card:'modinv',in:[0,3]},{card:'modsub',in:[2,1,3]},{card:'modmul',in:[4,5,3]}],
        targetText:'明文字母序 m',
@@ -747,12 +771,12 @@ function genAffineBreak(def){
     const dm=mod(m1-m2,26n); if(modinv(dm,26n)===null) return null;
     const c1=mod(a*m1+b,26n), c2=mod(a*m2+b,26n);
     if(a<2n) return null;
-    return { energy:def.energy, target:a,
+    return { target:a,
       seeds:[{value:m1,label:`m₁=${m1}`},{value:c1,label:`c₁=${c1}`},{value:m2,label:`m₂=${m2}`},{value:c2,label:`c₂=${c2}`},{value:26n,label:'26',kind:'mod'}],
       path:[{card:'modsub',in:[1,3,4]},{card:'modsub',in:[0,2,4]},{card:'modinv',in:[6,4]},{card:'modmul',in:[5,7,4]}],
       targetText:'金鑰乘數 a',
       story:`截獲兩組明密文對 (m₁,c₁)、(m₂,c₂)，反推仿射金鑰乘數 a=(c₁−c₂)(m₁−m₂)⁻¹ mod 26。` };
-  }, { energy:def.energy, target:5n,
+  }, { target:5n,
        seeds:[{value:1n,label:'m₁=1'},{value:13n,label:'c₁=13'},{value:2n,label:'m₂=2'},{value:18n,label:'c₂=18'},{value:26n,label:'26',kind:'mod'}],
        path:[{card:'modsub',in:[1,3,4]},{card:'modsub',in:[0,2,4]},{card:'modinv',in:[6,4]},{card:'modmul',in:[5,7,4]}],
        targetText:'金鑰乘數 a',
@@ -765,12 +789,12 @@ function genRsaKeygen(def){
     const phi=(p-1n)*(q-1n);
     const es=[3n,5n,7n,11n,13n,17n,19n].filter(e=>e<phi&&gcdBig(e,phi)===1n); if(!es.length) return null;
     const e=pick(es), d=modinv(e,phi); if(d===null||d<2n||d===e) return null;
-    return { energy:def.energy, target:d,
+    return { target:d,
       seeds:[{value:p,label:`p=${p}`},{value:q,label:`q=${q}`},{value:e,label:`e=${e}`}],
       path:[{card:'dec',in:[0]},{card:'dec',in:[1]},{card:'mul',in:[3,4]},{card:'modinv',in:[2,5]}],
       targetText:'私鑰 d',
       story:`RSA 金鑰生成：質數 p=${p}, q=${q}，公開指數 e=${e}。求私鑰 d=e⁻¹ mod φ，φ=(p−1)(q−1)。` };
-  }, { energy:def.energy, target:7n, seeds:[{value:5n,label:'p=5'},{value:11n,label:'q=11'},{value:23n,label:'e=23'}],
+  }, { target:7n, seeds:[{value:5n,label:'p=5'},{value:11n,label:'q=11'},{value:23n,label:'e=23'}],
        path:[{card:'dec',in:[0]},{card:'dec',in:[1]},{card:'mul',in:[3,4]},{card:'modinv',in:[2,5]}],
        targetText:'私鑰 d',
        story:'RSA 金鑰生成：質數 p=5, q=11，公開指數 e=23。求私鑰 d=e⁻¹ mod φ，φ=(p−1)(q−1)。' });
@@ -783,12 +807,12 @@ function genRsaEnc(def){
     const e=pick(es), M=BigInt(ri(2,Number(n)-1));
     if(gcdBig(M,n)!==1n) return null;
     const c=modpow(M,e,n); if(c===M||c<=1n) return null;
-    return { energy:def.energy, target:c,
+    return { target:c,
       seeds:[{value:M,label:`M=${M}`},{value:e,label:`e=${e}`},{value:n,label:`n=${n}`,kind:'mod'}],
       path:[{card:'modpow',in:[0,1,2]}],
       targetText:'密文 c = Mᵉ mod n',
       story:`RSA 加密：明文 M=${M}，公鑰 (n=${n}, e=${e})。求密文 c=M^e mod n。` };
-  }, { energy:def.energy, target:32n, seeds:[{value:2n,label:'M=2'},{value:5n,label:'e=5'},{value:35n,label:'n=35',kind:'mod'}],
+  }, { target:32n, seeds:[{value:2n,label:'M=2'},{value:5n,label:'e=5'},{value:35n,label:'n=35',kind:'mod'}],
        path:[{card:'modpow',in:[0,1,2]}], targetText:'密文 c = Mᵉ mod n',
        story:'RSA 加密：明文 M=2，公鑰 (n=35, e=5)。求密文 c=M^e mod n。' });
 }
@@ -800,12 +824,12 @@ function genRsaDec(def){
     const e=pick(es), d=modinv(e,phi); if(d===null) return null;
     const M=BigInt(ri(2,Number(n)-1)); if(gcdBig(M,n)!==1n||M<=1n) return null;
     const c=modpow(M,e,n); if(c===M||c<=1n) return null;
-    return { energy:def.energy, target:M,
+    return { target:M,
       seeds:[{value:c,label:`c=${c}`},{value:d,label:`d=${d}`},{value:n,label:`n=${n}`,kind:'mod'}],
       path:[{card:'modpow',in:[0,1,2]}],
       targetText:'明文 M = cᵈ mod n',
       story:`RSA 解密：密文 c=${c}，私鑰 d=${d}，模 n=${n}。求明文 M=c^d mod n。` };
-  }, { energy:def.energy, target:2n, seeds:[{value:32n,label:'c=32'},{value:5n,label:'d=5'},{value:35n,label:'n=35',kind:'mod'}],
+  }, { target:2n, seeds:[{value:32n,label:'c=32'},{value:5n,label:'d=5'},{value:35n,label:'n=35',kind:'mod'}],
        path:[{card:'modpow',in:[0,1,2]}], targetText:'明文 M = cᵈ mod n',
        story:'RSA 解密：密文 c=32，私鑰 d=5，模 n=35。求明文 M=c^d mod n。' });
 }
@@ -817,12 +841,12 @@ function genRsaCrt(def){
     const e=pick(es), d=modinv(e,phi); if(d===null) return null;
     const M=BigInt(ri(2,Number(n)-1)); if(gcdBig(M,n)!==1n||M<=1n) return null;
     const c=modpow(M,e,n); if(c===M||c<=1n) return null;
-    return { energy:def.energy, target:M,
+    return { target:M,
       seeds:[{value:c,label:`c=${c}`},{value:d,label:`d=${d}`},{value:p,label:`p=${p}`,kind:'mod'},{value:q,label:`q=${q}`,kind:'mod'}],
       path:[{card:'fermat',in:[1,2]},{card:'fermat',in:[1,3]},{card:'modpow',in:[0,4,2]},{card:'modpow',in:[0,5,3]},{card:'crt',in:[6,2,7,3]}],
       targetText:'明文 M（CRT 加速）',
       story:`RSA-CRT 解密：c=${c}, d=${d}，質因數 p=${p}, q=${q}。分別在 mod p / mod q 解密（費馬約簡指數），再以孫子定理合併還原 M。` };
-  }, { energy:def.energy, target:2n, seeds:[{value:32n,label:'c=32'},{value:5n,label:'d=5'},{value:5n,label:'p=5',kind:'mod'},{value:7n,label:'q=7',kind:'mod'}],
+  }, { target:2n, seeds:[{value:32n,label:'c=32'},{value:5n,label:'d=5'},{value:5n,label:'p=5',kind:'mod'},{value:7n,label:'q=7',kind:'mod'}],
        path:[{card:'fermat',in:[1,2]},{card:'fermat',in:[1,3]},{card:'modpow',in:[0,4,2]},{card:'modpow',in:[0,5,3]},{card:'crt',in:[6,2,7,3]}],
        targetText:'明文 M（CRT 加速）',
        story:'RSA-CRT 解密：c=32, d=5，質因數 p=5, q=7。分別在 mod p / mod q 解密（費馬約簡指數），再以孫子定理合併還原 M。' });
@@ -832,12 +856,12 @@ function genDhPub(def){
   return rollInstance(()=>{
     const p=pick([11n,13n,17n,19n,23n]), g=BigInt(ri(2,Number(p)-2)), a=BigInt(ri(2,Number(p)-2));
     const A=modpow(g,a,p); if(A<=1n||A===g||[g,a,p].some(v=>v===A)) return null;
-    return { energy:def.energy, target:A,
+    return { target:A,
       seeds:[{value:g,label:`g=${g}`},{value:a,label:`a=${a}`},{value:p,label:`p=${p}`,kind:'mod'}],
       path:[{card:'modpow',in:[0,1,2]}],
       targetText:`公開值 A = g^a mod ${p}`,
       story:`Diffie–Hellman 立基：公開質數 p=${p}、基元 g=${g}，私鑰 a=${a}。算公開值 A=g^a mod p。` };
-  }, { energy:def.energy, target:9n, seeds:[{value:2n,label:'g=2'},{value:5n,label:'a=5'},{value:23n,label:'p=23',kind:'mod'}],
+  }, { target:9n, seeds:[{value:2n,label:'g=2'},{value:5n,label:'a=5'},{value:23n,label:'p=23',kind:'mod'}],
        path:[{card:'modpow',in:[0,1,2]}], targetText:'公開值 A = g^a mod 23',
        story:'Diffie–Hellman 立基：p=23, g=2, a=5。算 A=g^a mod 23。' });
 }
@@ -846,12 +870,12 @@ function genDhExchange(def){
     const p=pick([13n,17n,19n,23n]), g=BigInt(ri(2,Number(p)-2));
     const a=BigInt(ri(2,Number(p)-2)); let b=BigInt(ri(2,Number(p)-2)); if(b===a) return null;
     const A=modpow(g,a,p), B=modpow(g,b,p); if(A===B||B<=1n||A<=1n||[g,a,b,p].some(v=>v===B)) return null;
-    return { energy:def.energy, target:B,
+    return { target:B,
       seeds:[{value:g,label:`g=${g}`},{value:a,label:`a=${a}`},{value:b,label:`b=${b}`},{value:p,label:`p=${p}`,kind:'mod'}],
       path:[{card:'modpow',in:[0,1,3]},{card:'modpow',in:[0,2,3]}],
       targetText:`Bob 公開值 B = g^b mod ${p}`,
       story:`雙方各持私鑰：Alice a=${a}、Bob b=${b}，公開 p=${p}, g=${g}。先算 A=g^a，再算 Bob 的 B=g^b mod p。` };
-  }, { energy:def.energy, target:6n, seeds:[{value:2n,label:'g=2'},{value:4n,label:'a=4'},{value:5n,label:'b=5'},{value:13n,label:'p=13',kind:'mod'}],
+  }, { target:6n, seeds:[{value:2n,label:'g=2'},{value:4n,label:'a=4'},{value:5n,label:'b=5'},{value:13n,label:'p=13',kind:'mod'}],
        path:[{card:'modpow',in:[0,1,3]},{card:'modpow',in:[0,2,3]}], targetText:'Bob 公開值 B = g^b mod 13',
        story:'雙方私鑰：Alice a=4、Bob b=5，p=13, g=2。算 A=g^a 再算 B=g^b mod 13。' });
 }
@@ -862,12 +886,12 @@ function genDhShared(def){
     const A=modpow(g,a,p), B=modpow(g,b,p); if(A===B) return null;
     const KA=modpow(B,a,p), KB=modpow(A,b,p); if(KA!==KB||KA<=1n) return null;
     if([A,B,a,b].some(v=>v===KA)) return null;
-    return { energy:def.energy, target:KA, winCount:2,
+    return { target:KA, winCount:2,
       seeds:[{value:A,label:`A=${A}`},{value:B,label:`B=${B}`},{value:a,label:`a=${a}`},{value:b,label:`b=${b}`},{value:p,label:`p=${p}`,kind:'mod'}],
       path:[{card:'modpow',in:[1,2,4]},{card:'modpow',in:[0,3,4]}],
       targetText:`共享密鑰 K：驗 Bᵃ ≡ Aᵇ (mod ${p})`,
       story:`Alice 收到 B=${B}，用私鑰 a=${a} 算 K_A=B^a；Bob 收到 A=${A}，用私鑰 b=${b} 算 K_B=A^b。兩者應相等＝共享密鑰（mod ${p}）。` };
-  }, { energy:def.energy, target:9n, winCount:2,
+  }, { target:9n, winCount:2,
        seeds:[{value:3n,label:'A=3'},{value:6n,label:'B=6'},{value:4n,label:'a=4'},{value:5n,label:'b=5'},{value:13n,label:'p=13',kind:'mod'}],
        path:[{card:'modpow',in:[1,2,4]},{card:'modpow',in:[0,3,4]}], targetText:'共享密鑰 K：驗 Bᵃ ≡ Aᵇ (mod 13)',
        story:'Alice 收到 B=6 算 K_A=B^a；Bob 收到 A=3 算 K_B=A^b（a=4, b=5, mod 13）。兩者相等＝共享密鑰。' });
@@ -878,12 +902,12 @@ function genElgamal(def){
           m=BigInt(ri(2,Number(p)-2)), k=BigInt(ri(2,Number(p)-2));
     const s=modpow(y,k,p), c2=mod(m*s,p);
     if([g,y,m,k,p].some(v=>v===c2)||c2<=1n) return null;
-    return { energy:def.energy, target:c2,
+    return { target:c2,
       seeds:[{value:g,label:`g=${g}`},{value:y,label:`y=${y}`},{value:m,label:`m=${m}`},{value:k,label:`k=${k}`},{value:p,label:`p=${p}`,kind:'mod'}],
       path:[{card:'modpow',in:[0,3,4]},{card:'modpow',in:[1,3,4]},{card:'modmul',in:[2,6,4]}],
       targetText:`ElGamal 密文分量 c₂ = m·yᵏ mod ${p}`,
       story:`ElGamal 加密：公鑰 (p=${p}, g=${g}, y=${y})，明文 m=${m}，臨時亂數 k=${k}。算 c₁=g^k、遮罩 yᵏ，得 c₂=m·yᵏ mod p。` };
-  }, { energy:def.energy, target:19n, seeds:[{value:5n,label:'g=5'},{value:8n,label:'y=8'},{value:7n,label:'m=7'},{value:3n,label:'k=3'},{value:23n,label:'p=23',kind:'mod'}],
+  }, { target:19n, seeds:[{value:5n,label:'g=5'},{value:8n,label:'y=8'},{value:7n,label:'m=7'},{value:3n,label:'k=3'},{value:23n,label:'p=23',kind:'mod'}],
        path:[{card:'modpow',in:[0,3,4]},{card:'modpow',in:[1,3,4]},{card:'modmul',in:[2,6,4]}], targetText:'ElGamal 密文分量 c₂ = m·yᵏ mod 23',
        story:'ElGamal 加密：(p=23, g=5, y=8)，m=7, k=3。算 c₁=g^k、yᵏ，得 c₂=m·yᵏ mod 23。' });
 }
@@ -892,12 +916,12 @@ function genDlpBreak(def){
     const p=pick([23n,29n,31n,37n,41n]), g=BigInt(ri(2,Number(p)-2)), x0=BigInt(ri(2,Number(p)-2));
     const h=modpow(g,x0,p), x=dlogSolve(g,h,p);
     if(x===null||x<2n||h<=1n||h===g||[g,h,p].some(v=>v===x)) return null;
-    return { energy:def.energy, target:x,
+    return { target:x,
       seeds:[{value:g,label:`g=${g}`},{value:h,label:`h=${h}`},{value:p,label:`p=${p}`,kind:'mod'}],
       path:[{card:'dlog',in:[0,1,2]}],
       targetText:`離散對數 x：解 ${g}^x ≡ ${h} (mod ${p})`,
       story:`破解 DH 的核心難題：已知 g=${g}, h=${h}, p=${p}，反求指數 x 使 g^x ≡ h (mod p)。` };
-  }, { energy:def.energy, target:6n, seeds:[{value:5n,label:'g=5'},{value:8n,label:'h=8'},{value:23n,label:'p=23',kind:'mod'}],
+  }, { target:6n, seeds:[{value:5n,label:'g=5'},{value:8n,label:'h=8'},{value:23n,label:'p=23',kind:'mod'}],
        path:[{card:'dlog',in:[0,1,2]}], targetText:'離散對數 x：解 5^x ≡ 8 (mod 23)',
        story:'破解離散對數：g=5, h=8, p=23，反求 x 使 5^x ≡ 8 (mod 23)。' });
 }
@@ -914,12 +938,12 @@ function genSign(def){
     const k=rsaKeyForSign(); if(!k) return null;
     const m=BigInt(ri(2,40)), h=toyHash(m), sig=modpow(h,k.d,k.n);
     if(sig<=1n||[m,k.d,k.n].some(v=>v===sig)) return null;
-    return { energy:def.energy, target:sig,
+    return { target:sig,
       seeds:[{value:m,label:`m=${m}`},{value:k.d,label:`d=${k.d}`},{value:k.n,label:`n=${k.n}`,kind:'mod'}],
       path:[{card:'hash',in:[0]},{card:'modpow',in:[3,1,2]}],
       targetText:`簽章 sig = H(m)ᵈ mod ${k.n}`,
       story:`數位簽章：訊息 m=${m}，私鑰 d=${k.d}，模 n=${k.n}。先雜湊 H(m)，再以私鑰加密 sig=H(m)^d mod n。` };
-  }, { energy:def.energy, target:23n, seeds:[{value:4n,label:'m=4'},{value:27n,label:'d=27'},{value:55n,label:'n=55',kind:'mod'}],
+  }, { target:23n, seeds:[{value:4n,label:'m=4'},{value:27n,label:'d=27'},{value:55n,label:'n=55',kind:'mod'}],
        path:[{card:'hash',in:[0]},{card:'modpow',in:[3,1,2]}], targetText:'簽章 sig = H(m)ᵈ mod 55',
        story:'數位簽章：m=4, d=27, n=55。先雜湊 H(m)，再 sig=H(m)^d mod 55。' });
 }
@@ -928,12 +952,12 @@ function genVerify(def){
     const k=rsaKeyForSign(); if(!k) return null;
     const m=BigInt(ri(2,40)), h=toyHash(m), sig=modpow(h,k.d,k.n);
     if(h<=0n||[m,sig,k.e,k.n].some(v=>v===h)) return null;
-    return { energy:def.energy, target:h, winCount:2,
+    return { target:h, winCount:2,
       seeds:[{value:m,label:`m=${m}`},{value:sig,label:`sig=${sig}`},{value:k.e,label:`e=${k.e}`},{value:k.n,label:`n=${k.n}`,kind:'mod'}],
       path:[{card:'hash',in:[0]},{card:'modpow',in:[1,2,3]}],
       targetText:`驗章：驗 sigᵉ ≡ H(m) (mod ${k.n})`,
       story:`驗證簽章：訊息 m=${m}、簽章 sig=${sig}、公鑰 (e=${k.e}, n=${k.n})。算 m′=sig^e mod n，並獨立算 H(m)，兩者相等才算驗章通過。` };
-  }, { energy:def.energy, target:12n, winCount:2,
+  }, { target:12n, winCount:2,
        seeds:[{value:4n,label:'m=4'},{value:23n,label:'sig=23'},{value:3n,label:'e=3'},{value:55n,label:'n=55',kind:'mod'}],
        path:[{card:'hash',in:[0]},{card:'modpow',in:[1,2,3]}], targetText:'驗章：驗 sigᵉ ≡ H(m) (mod 55)',
        story:'驗證簽章：m=4、sig=23、公鑰 (e=3, n=55)。算 m′=sig^e mod n 與 H(m)，相等則驗章通過。' });
@@ -943,12 +967,12 @@ function genForge(def){
     const k=rsaKeyForSign(); if(!k) return null;
     const sig=BigInt(ri(2,Number(k.n)-2)); if(gcdBig(sig,k.n)!==1n) return null;
     const m=modpow(sig,k.e,k.n); if(m<=1n||[sig,k.e,k.n].some(v=>v===m)) return null;
-    return { energy:def.energy, target:m,
+    return { target:m,
       seeds:[{value:sig,label:`sig=${sig}`},{value:k.e,label:`e=${k.e}`},{value:k.n,label:`n=${k.n}`,kind:'mod'}],
       path:[{card:'modpow',in:[0,1,2]}],
       targetText:`存在性偽造：算可驗訊息 m = sigᵉ mod ${k.n}`,
       story:`無雜湊的 RSA 簽章可被偽造：隨意挑 sig=${sig}，反算 m=sig^e mod n（公鑰 e=${k.e}, n=${k.n}）。這組 (m, sig) 必然通過驗證——這就是為何簽章前必須先雜湊。` };
-  }, { energy:def.energy, target:13n, seeds:[{value:7n,label:'sig=7'},{value:3n,label:'e=3'},{value:55n,label:'n=55',kind:'mod'}],
+  }, { target:13n, seeds:[{value:7n,label:'sig=7'},{value:3n,label:'e=3'},{value:55n,label:'n=55',kind:'mod'}],
        path:[{card:'modpow',in:[0,1,2]}], targetText:'存在性偽造：算可驗訊息 m = sigᵉ mod 55',
        story:'無雜湊 RSA 簽章可偽造：挑 sig=7，反算 m=sig^e mod 55（e=3）。(m, sig) 必過驗證——故簽章前須先雜湊。' });
 }
@@ -957,12 +981,12 @@ function genCollision(def){
     const m1=BigInt(ri(2,60)), h=toyHash(m1); let m2=null;
     for(let t=0;t<200;t++){ const c=BigInt(ri(2,60)); if(c!==m1&&toyHash(c)===h){ m2=c; break; } }
     if(m2===null||[m1,m2].some(v=>v===h)) return null;
-    return { energy:def.energy, target:h, winCount:2,
+    return { target:h, winCount:2,
       seeds:[{value:m1,label:`m₁=${m1}`},{value:m2,label:`m₂=${m2}`}],
       path:[{card:'hash',in:[0]},{card:'hash',in:[1]}],
       targetText:`生日碰撞：找 H(m₁) = H(m₂)`,
       story:`雜湊碰撞：兩個不同訊息 m₁=${m1}、m₂=${m2} 卻有相同雜湊值。分別算 H(m₁)、H(m₂)，相等即示範碰撞（玩具雜湊空間小，碰撞易尋）。` };
-  }, { energy:def.energy, target:12n, winCount:2, seeds:[{value:3n,label:'m₁=3'},{value:4n,label:'m₂=4'}],
+  }, { target:12n, winCount:2, seeds:[{value:3n,label:'m₁=3'},{value:4n,label:'m₂=4'}],
        path:[{card:'hash',in:[0]},{card:'hash',in:[1]}], targetText:'生日碰撞：找 H(m₁) = H(m₂)',
        story:'雜湊碰撞：不同訊息 m₁=3、m₂=4 卻同雜湊值。分別算 H(m₁)、H(m₂)，相等即碰撞。' });
 }
@@ -971,13 +995,13 @@ function genMagnum(def){
     const k=rsaKeyForSign(); if(!k) return null;
     const m=BigInt(ri(2,40)), h=toyHash(m), sig=modpow(h,k.d,k.n), m2=modpow(sig,k.e,k.n);
     if(m2!==h||[k.p,k.q,k.e,m].some(v=>v===h)) return null;
-    return { energy:def.energy, target:h, winCount:2,
+    return { target:h, winCount:2,
       seeds:[{value:k.p,label:`p=${k.p}`},{value:k.q,label:`q=${k.q}`},{value:k.e,label:`e=${k.e}`},{value:m,label:`m=${m}`}],
       path:[{card:'mul',in:[0,1]},{card:'dec',in:[0]},{card:'dec',in:[1]},{card:'mul',in:[5,6]},
             {card:'modinv',in:[2,7]},{card:'hash',in:[3]},{card:'modpow',in:[9,8,4]},{card:'modpow',in:[10,2,4]}],
       targetText:`大功業：鑄鑰→簽→驗，驗 m′ = H(m)`,
       story:`最終封印（Q.E.D.）：由質數 p=${k.p}, q=${k.q} 鑄鑰（n=pq、φ=(p−1)(q−1)、d=e⁻¹ mod φ，e=${k.e}），對訊息 m=${m} 雜湊後簽章 sig=H(m)^d，再以公鑰驗 m′=sig^e。全鏈閉合、m′=H(m) 則命題得證。` };
-  }, { energy:def.energy, target:12n, winCount:2,
+  }, { target:12n, winCount:2,
        seeds:[{value:5n,label:'p=5'},{value:11n,label:'q=11'},{value:3n,label:'e=3'},{value:4n,label:'m=4'}],
        path:[{card:'mul',in:[0,1]},{card:'dec',in:[0]},{card:'dec',in:[1]},{card:'mul',in:[5,6]},
              {card:'modinv',in:[2,7]},{card:'hash',in:[3]},{card:'modpow',in:[9,8,4]},{card:'modpow',in:[10,2,4]}],
@@ -991,12 +1015,12 @@ function genEcAdd(def){
     const j=BigInt(ri(2,Number(ord)-2)), Q=ecMul(j,P);
     if(Q.inf||P.x===Q.x) return null;
     const R=ecAdd(P,Q); if(R.inf||valEq(R,P)||valEq(R,Q)) return null;
-    return { energy:def.energy, target:R,
+    return { target:R,
       seeds:[{value:P,label:'P'},{value:Q,label:'Q'}],
       path:[{card:'ptadd',in:[0,1]}],
       targetText:`R = P ⊕ Q　(曲線 y²=x³+${C.a}x+${C.b} mod ${C.p})`,
       story:`橢圓曲線群法則：相異點 P=(${P.x},${P.y})、Q=(${Q.x},${Q.y})，作割線交曲線於第三點再鏡射 x 軸＝P⊕Q（mod ${C.p}）。` };
-  }, { energy:def.energy, target:EC17(10,6), seeds:[{value:EC17(5,1),label:'P'},{value:EC17(6,3),label:'Q'}],
+  }, { target:EC17(10,6), seeds:[{value:EC17(5,1),label:'P'},{value:EC17(6,3),label:'Q'}],
        path:[{card:'ptadd',in:[0,1]}], targetText:'R = P ⊕ Q　(曲線 y²=x³+2x+2 mod 17)',
        story:'橢圓曲線群法則：相異點 P=(5,1)、Q=(6,3)，作割線求第三交點鏡射＝P⊕Q（mod 17）。' });
 }
@@ -1004,12 +1028,12 @@ function genEcDbl(def){
   return rollInstance(()=>{
     const C=ecCurve(); if(!C) return null; const P=C.P, ord=ecOrder(P); if(!ord||ord<5n) return null;
     const R=ecDbl(P); if(R.inf||valEq(R,P)) return null;
-    return { energy:def.energy, target:R,
+    return { target:R,
       seeds:[{value:P,label:'P'}],
       path:[{card:'ptdbl',in:[0]}],
       targetText:`2P　(曲線 y²=x³+${C.a}x+${C.b} mod ${C.p})`,
       story:`倍點：對 P=(${P.x},${P.y}) 作切線，交曲線於另一點鏡射＝2P（mod ${C.p}）。` };
-  }, { energy:def.energy, target:EC17(6,3), seeds:[{value:EC17(5,1),label:'P'}],
+  }, { target:EC17(6,3), seeds:[{value:EC17(5,1),label:'P'}],
        path:[{card:'ptdbl',in:[0]}], targetText:'2P　(曲線 y²=x³+2x+2 mod 17)',
        story:'倍點：對 P=(5,1) 作切線，交曲線另一點鏡射＝2P（mod 17）。' });
 }
@@ -1017,12 +1041,12 @@ function genEcChain(def){
   return rollInstance(()=>{
     const C=ecCurve(); if(!C) return null; const P=C.P, ord=ecOrder(P); if(!ord||ord<7n) return null;
     const two=ecDbl(P), R=ecAdd(P,two); if(two.inf||R.inf||valEq(R,P)||valEq(R,two)) return null;
-    return { energy:def.energy, target:R,
+    return { target:R,
       seeds:[{value:P,label:'P'}],
       path:[{card:'ptdbl',in:[0]},{card:'ptadd',in:[0,1]}],
       targetText:`3P = 2P ⊕ P　(mod ${C.p})`,
       story:`組合群運算：先倍點得 2P，再與 P 相加＝3P（曲線 y²=x³+${C.a}x+${C.b} mod ${C.p}）。這正是 double-and-add 的雛形。` };
-  }, { energy:def.energy, target:EC17(10,6), seeds:[{value:EC17(5,1),label:'P'}],
+  }, { target:EC17(10,6), seeds:[{value:EC17(5,1),label:'P'}],
        path:[{card:'ptdbl',in:[0]},{card:'ptadd',in:[0,1]}], targetText:'3P = 2P ⊕ P　(mod 17)',
        story:'組合群運算：先倍點得 2P，再與 P 相加＝3P（mod 17），即 double-and-add 雛形。' });
 }
@@ -1030,12 +1054,12 @@ function genEcMul(def){
   return rollInstance(()=>{
     const C=ecCurve(); if(!C) return null; const P=C.P, ord=ecOrder(P); if(!ord||ord<7n) return null;
     const k=BigInt(ri(3,Number(ord)-2)), R=ecMul(k,P); if(R.inf||valEq(R,P)) return null;
-    return { energy:def.energy, target:R,
+    return { target:R,
       seeds:[{value:k,label:`k=${k}`},{value:P,label:'P'}],
       path:[{card:'scalarmul',in:[0,1]}],
       targetText:`kP（k=${k}，曲線 y²=x³+${C.a}x+${C.b} mod ${C.p}）`,
       story:`純量乘：把基點 P=(${P.x},${P.y}) 連加 k=${k} 次＝kP，引擎以 double-and-add 求得（mod ${C.p}）。正向易算、反向難＝ECDLP。` };
-  }, { energy:def.energy, target:EC17(9,16), seeds:[{value:5n,label:'k=5'},{value:EC17(5,1),label:'P'}],
+  }, { target:EC17(9,16), seeds:[{value:5n,label:'k=5'},{value:EC17(5,1),label:'P'}],
        path:[{card:'scalarmul',in:[0,1]}], targetText:'kP（k=5，曲線 y²=x³+2x+2 mod 17）',
        story:'純量乘：基點 P=(5,1) 連加 5 次＝5P（mod 17），double-and-add 求得。' });
 }
@@ -1045,12 +1069,12 @@ function genEcdh(def){
     const a=BigInt(ri(2,5)), b=BigInt(ri(2,5)); if(a===b) return null;
     const K1=ecMul(a,ecMul(b,P)), K2=ecMul(b,ecMul(a,P));
     if(K1.inf||!valEq(K1,K2)||valEq(K1,P)) return null;
-    return { energy:def.energy, target:K1, winCount:2,
+    return { target:K1, winCount:2,
       seeds:[{value:P,label:'P'},{value:a,label:`a=${a}`},{value:b,label:`b=${b}`}],
       path:[{card:'scalarmul',in:[2,0]},{card:'scalarmul',in:[1,3]},{card:'scalarmul',in:[1,0]},{card:'scalarmul',in:[2,5]}],
       targetText:`ECDH 共享點 K：驗 a(bP) = b(aP)　(mod ${C.p})`,
       story:`橢圓曲線 DH：Alice 私鑰 a=${a}、Bob 私鑰 b=${b}，基點 P=(${P.x},${P.y})。Alice 算 a(bP)、Bob 算 b(aP)，兩者應為同一點＝共享密鑰（mod ${C.p}）。` };
-  }, { energy:def.energy, target:EC17(16,13), winCount:2,
+  }, { target:EC17(16,13), winCount:2,
        seeds:[{value:EC17(5,1),label:'P'},{value:2n,label:'a=2'},{value:3n,label:'b=3'}],
        path:[{card:'scalarmul',in:[2,0]},{card:'scalarmul',in:[1,3]},{card:'scalarmul',in:[1,0]},{card:'scalarmul',in:[2,5]}],
        targetText:'ECDH 共享點 K：驗 a(bP) = b(aP)　(mod 17)',
@@ -1061,12 +1085,12 @@ function genEcdlog(def){
     const C=ecCurve(); if(!C) return null; const P=C.P, ord=ecOrder(P); if(!ord||ord<8n) return null;
     const k0=BigInt(ri(3,Number(ord)-2)), Q=ecMul(k0,P); if(Q.inf) return null;
     const k=ecdlogSolve(P,Q); if(k===null||k<2n||valEq(Q,P)) return null;
-    return { energy:def.energy, target:k,
+    return { target:k,
       seeds:[{value:P,label:'P'},{value:Q,label:'Q'}],
       path:[{card:'ecdlog',in:[0,1]}],
       targetText:`破 ECDLP：解 k 使 kP = Q　(mod ${C.p})`,
       story:`橢圓曲線離散對數：已知基點 P=(${P.x},${P.y}) 與 Q=(${Q.x},${Q.y})=kP，反求純量 k。這是 ECC 安全性的根基——正向 kP 易算、反向求 k 難。` };
-  }, { energy:def.energy, target:5n, seeds:[{value:EC17(5,1),label:'P'},{value:EC17(9,16),label:'Q'}],
+  }, { target:5n, seeds:[{value:EC17(5,1),label:'P'},{value:EC17(9,16),label:'Q'}],
        path:[{card:'ecdlog',in:[0,1]}], targetText:'破 ECDLP：解 k 使 kP = Q　(mod 17)',
        story:'橢圓曲線離散對數：P=(5,1)、Q=(9,16)=kP，反求 k。正向易、反向難＝ECC 安全根基。' });
 }
@@ -1075,51 +1099,51 @@ function genEcdlog(def){
 // CHAPTERS[ci].floors[fi] = stage def. Last floor of each chapter has boss:true (章末王關).
 const CHAPTERS = [
   { id:0, name:'質料準備', opus:'Materia Prima', latin:'Materia Prima', blurb:'數論四種質料：同餘、輾轉、逆元、孫子、歐拉。', floors:[
-    { name:'同餘之火', opus:'I · 反覆平方', hand:['modsq','modmul'], energy:4, gen:genLemma1 },
-    { name:'輾轉之輪', opus:'II · 最大公因數', hand:['gcd'], energy:3, gen:genCh0gcd },
-    { name:'逆元之鏡', opus:'III · 模逆元', hand:['modinv','modmul'], energy:3, gen:genCh0inv },
-    { name:'孫子之盤', opus:'IV · 中國剩餘定理', hand:['crt','modmul'], energy:4, gen:genCh0crt },
-    { name:'歐拉之計', opus:'V · 歐拉函數', boss:true, hand:['factor','phi'], energy:4, gen:genCh0phi },
+    { name:'同餘之火', opus:'I · 反覆平方', hand:['modsq','modmul'], gen:genLemma1 },
+    { name:'輾轉之輪', opus:'II · 最大公因數', hand:['gcd'], gen:genCh0gcd },
+    { name:'逆元之鏡', opus:'III · 模逆元', hand:['modinv','modmul'], gen:genCh0inv },
+    { name:'孫子之盤', opus:'IV · 中國剩餘定理', hand:['crt','modmul'], gen:genCh0crt },
+    { name:'歐拉之計', opus:'V · 歐拉函數', boss:true, hand:['factor','phi'], gen:genCh0phi },
   ]},
   { id:1, name:'黑化', opus:'Nigredo', latin:'Nigredo', blurb:'最原始的密碼：模算術披上字母外衣。', floors:[
-    { name:'凱撒之位移', opus:'I · 凱撒密碼', hand:['modsub'], energy:3, gen:genCaesar },
-    { name:'仿射之鎖', opus:'II · 仿射密碼', hand:['modinv','modsub','modmul'], energy:4, gen:genAffine },
-    { name:'破譯', opus:'III · 已知明文攻擊', boss:true, hand:['modsub','modinv','modmul'], energy:6, gen:genAffineBreak },
+    { name:'凱撒之位移', opus:'I · 凱撒密碼', hand:['modsub'], gen:genCaesar },
+    { name:'仿射之鎖', opus:'II · 仿射密碼', hand:['modinv','modsub','modmul'], gen:genAffine },
+    { name:'破譯', opus:'III · 已知明文攻擊', boss:true, hand:['modsub','modinv','modmul'], gen:genAffineBreak },
   ]},
   { id:2, name:'白化', opus:'Albedo', latin:'Albedo', blurb:'純化成金鑰對，再從密文還原明文。', floors:[
-    { name:'鑄鑰', opus:'I · 金鑰生成', hand:['dec','mul','modinv'], energy:5, gen:genRsaKeygen },
-    { name:'封印', opus:'II · 加密', hand:['modpow'], energy:2, gen:genRsaEnc },
-    { name:'啟封', opus:'III · 解密', hand:['modpow'], energy:2, gen:genRsaDec },
-    { name:'孫子捷徑', opus:'IV · CRT 加速', hand:['fermat','modpow','crt'], energy:6, gen:genRsaCrt },
-    { name:'破譯 RSA', opus:'V · 親手破鑰', boss:true, hand:['factor','dec','mul','modinv','modpow'], energy:9, gen:genTheorem },
+    { name:'鑄鑰', opus:'I · 金鑰生成', hand:['dec','mul','modinv'], gen:genRsaKeygen },
+    { name:'封印', opus:'II · 加密', hand:['modpow'], gen:genRsaEnc },
+    { name:'啟封', opus:'III · 解密', hand:['modpow'], gen:genRsaDec },
+    { name:'孫子捷徑', opus:'IV · CRT 加速', hand:['fermat','modpow','crt'], gen:genRsaCrt },
+    { name:'破譯 RSA', opus:'V · 親手破鑰', boss:true, hand:['factor','dec','mul','modinv','modpow'], gen:genTheorem },
   ]},
   { id:3, name:'黃化', opus:'Citrinitas', latin:'Citrinitas', blurb:'不再分解，而是點化：指數正向易、反向難。', floors:[
-    { name:'立基元', opus:'I · 公開值', hand:['modpow'], energy:2, gen:genDhPub },
-    { name:'雙鑰交換', opus:'II · Diffie–Hellman', hand:['modpow'], energy:3, gen:genDhExchange },
-    { name:'共識之鑰', opus:'III · 共享密鑰', hand:['modpow'], energy:3, gen:genDhShared },
-    { name:'ElGamal 封印', opus:'IV · ElGamal 加密', hand:['modpow','modmul'], energy:4, gen:genElgamal },
-    { name:'破 DLP', opus:'V · 反求離散對數', boss:true, hand:['dlog','modpow'], energy:6, gen:genDlpBreak },
+    { name:'立基元', opus:'I · 公開值', hand:['modpow'], gen:genDhPub },
+    { name:'雙鑰交換', opus:'II · Diffie–Hellman', hand:['modpow'], gen:genDhExchange },
+    { name:'共識之鑰', opus:'III · 共享密鑰', hand:['modpow'], gen:genDhShared },
+    { name:'ElGamal 封印', opus:'IV · ElGamal 加密', hand:['modpow','modmul'], gen:genElgamal },
+    { name:'破 DLP', opus:'V · 反求離散對數', boss:true, hand:['dlog','modpow'], gen:genDlpBreak },
   ]},
   { id:4, name:'紅化', opus:'Rubedo', latin:'Rubedo', blurb:'完成體：把「數」換成曲線上的點，群運算取代乘冪。', floors:[
-    { name:'點加之術', opus:'I · 點加 P⊕Q', hand:['ptadd'], energy:3, gen:genEcAdd },
-    { name:'倍點之術', opus:'II · 倍點 2P', hand:['ptdbl'], energy:3, gen:genEcDbl },
-    { name:'弦切之鏈', opus:'III · 3P = 2P⊕P', hand:['ptdbl','ptadd'], energy:4, gen:genEcChain },
-    { name:'點乘之階', opus:'IV · 純量乘 kP', hand:['scalarmul','ptdbl','ptadd'], energy:5, gen:genEcMul },
-    { name:'曲線交鑰', opus:'V · ECDH', hand:['scalarmul'], energy:9, gen:genEcdh },
-    { name:'破 ECDLP', opus:'VI · 反求純量', boss:true, hand:['ecdlog','scalarmul'], energy:6, gen:genEcdlog },
+    { name:'點加之術', opus:'I · 點加 P⊕Q', hand:['ptadd'], gen:genEcAdd },
+    { name:'倍點之術', opus:'II · 倍點 2P', hand:['ptdbl'], gen:genEcDbl },
+    { name:'弦切之鏈', opus:'III · 3P = 2P⊕P', hand:['ptdbl','ptadd'], gen:genEcChain },
+    { name:'點乘之階', opus:'IV · 純量乘 kP', hand:['scalarmul','ptdbl','ptadd'], gen:genEcMul },
+    { name:'曲線交鑰', opus:'V · ECDH', hand:['scalarmul'], gen:genEcdh },
+    { name:'破 ECDLP', opus:'VI · 反求純量', boss:true, hand:['ecdlog','scalarmul'], gen:genEcdlog },
   ]},
   { id:5, name:'封印', opus:'Sigillum', latin:'Sigillum', blurb:'大功業蓋章：用私鑰簽、公鑰驗，以雜湊封住完整性。', floors:[
-    { name:'落款', opus:'I · 簽章', hand:['hash','modpow'], energy:3, gen:genSign },
-    { name:'驗印', opus:'II · 驗章', hand:['hash','modpow'], energy:3, gen:genVerify },
-    { name:'偽造之誘', opus:'III · 存在性偽造', hand:['modpow'], energy:4, gen:genForge },
-    { name:'生日碰撞', opus:'IV · 雜湊碰撞', hand:['hash'], energy:5, gen:genCollision },
-    { name:'大功業完成', opus:'V · 自簽訊息鏈', boss:true, hand:['mul','dec','modinv','hash','modpow'], energy:10, gen:genMagnum },
+    { name:'落款', opus:'I · 簽章', hand:['hash','modpow'], gen:genSign },
+    { name:'驗印', opus:'II · 驗章', hand:['hash','modpow'], gen:genVerify },
+    { name:'偽造之誘', opus:'III · 存在性偽造', hand:['modpow'], gen:genForge },
+    { name:'生日碰撞', opus:'IV · 雜湊碰撞', hand:['hash'], gen:genCollision },
+    { name:'大功業完成', opus:'V · 自簽訊息鏈', boss:true, hand:['mul','dec','modinv','hash','modpow'], gen:genMagnum },
   ]},
 ];
 
 // ============================== State ==============================
 let state=null, tokenCounter=0, victoryImmune=false, toastTimer=null;
-function freshRun(){ state={chapter:0, floor:0, energyBonus:0, undo:2, tokens:[], used:0, hand:[], pending:null, history:[], log:[], transcript:[], proofLog:[], curInst:null}; }
+function freshRun(){ state={chapter:0, floor:0, tokens:[], hand:[], pending:null, history:[], log:[], transcript:[], proofLog:[], curInst:null}; }
 function chapterDef(){ return CHAPTERS[state.chapter]; }
 function floorDefs(){ return chapterDef().floors; }
 function curDef(){ return floorDefs()[state.floor]; }
@@ -1128,51 +1152,54 @@ function loadFloor(n, reroll=true){
   state.floor=n; tokenCounter=0;
   if(reroll||!state.curInst) state.curInst=def.gen(def);
   const inst=state.curInst;
+  if(!inst.goal) inst.goal=deriveGoal(inst);
   state.tokens=inst.seeds.map(s=>({id:++tokenCounter, value:s.value, label:s.label, kind:s.kind}));
-  state.used=0; state.hand=def.hand.slice(); state.pending=null; state.history=[]; state.log=[]; state.transcript=[];
+  state.hand=def.hand.slice(); state.pending=null; state.history=[]; state.log=[]; state.transcript=[];
   victoryImmune=true; setTimeout(()=>{victoryImmune=false;},1500);
   render();
 }
-function energyMax(){ return curDef().energy + state.energyBonus; }
-function minHandCost(){ return Math.min(...state.hand.map(id=>CARDS[id].cost)); }
+function stepCount(){ return state.transcript.length; }
 // ---- chapter unlock progress (localStorage) ----
-function getUnlocked(){ try{ return Math.max(0, parseInt(localStorage.getItem('qed-unlocked'))||0); }catch(e){ return 0; } }
+// 【測試旗標】DEV_UNLOCK_ALL=true → 地圖全章解鎖，方便逐章測試。正式發佈改回 false。
+const DEV_UNLOCK_ALL = true;
+function getUnlocked(){ try{ const s=Math.max(0, parseInt(localStorage.getItem('qed-unlocked'))||0); return DEV_UNLOCK_ALL ? Math.max(s, CHAPTERS.length) : s; }catch(e){ return DEV_UNLOCK_ALL ? CHAPTERS.length : 0; } }
 function setUnlocked(ci){ try{ if(ci>getUnlocked()) localStorage.setItem('qed-unlocked', String(ci)); }catch(e){} }
 
 // ============================== Rendering ==============================
 function render(){
-  const def=curDef(), ch=chapterDef(), inst=state.curInst, emax=energyMax();
+  const def=curDef(), ch=chapterDef(), inst=state.curInst;
   document.getElementById('stage-name').innerHTML=`${ch.name} · ${def.name}<span class="opus">${ch.opus} · ${def.opus}</span>`;
-  document.getElementById('energy-text').textContent=`${emax-state.used} / ${emax}`;
-  document.getElementById('vial').style.width=`${100*(emax-state.used)/emax}%`;
-  document.getElementById('undo-count').textContent=state.undo;
-  document.getElementById('btn-undo').disabled=(state.undo<=0||state.history.length===0);
+  document.getElementById('step-text').textContent=`${stepCount()} 步`;
+  document.getElementById('btn-undo').disabled=(state.history.length===0);
   document.getElementById('goal-target').textContent=inst.targetText;
+  document.getElementById('goal-given').textContent=givenLine(inst.seeds);
   document.getElementById('goal-story').textContent=inst.story;
-  document.getElementById('goal-verified').textContent=`引擎已驗證可解 · 最短 ${inst.minSteps} 步 · 耗預算 ${inst.minCost}`;
+  document.getElementById('goal-verified').textContent=`引擎已驗證可解 · 最佳 ${inst.par} 步`;
   renderVessel(); renderTokens(); renderHand(); renderLog();
 }
 function renderTokens(){
   const inst=state.curInst, p=state.pending;
   document.getElementById('tokens').innerHTML=state.tokens.map(t=>{
     const pi=p?p.slots.findIndex(s=>s&&s.id===t.id):-1, isMod=t.kind==='mod';
-    let cls='coin'; if(isMod)cls+=' mod'; if(valEq(t.value,inst.target))cls+=' match'; if(p)cls+=' selectable'; if(pi>=0)cls+=' picked';
+    let cls='coin'; if(isMod)cls+=' mod'; if(isGoalHighlight(t,inst.goal))cls+=' match'; if(p)cls+=' selectable'; if(pi>=0)cls+=' picked';
     if(state.justForged&&state.justForged.includes(t.id))cls+=' forged';
     const ord=pi>=0?`<span class="order">${pi+1}</span>`:'';
     const rm=!p?`<button class="rm" title="移除此物" aria-label="移除 ${t.label}" onclick="event.stopPropagation();removeToken(${t.id})">✕</button>`:'';
     const drag=p?` draggable="true" ondragstart="dragToken(event,${t.id})" ondragend="this.classList.remove('dragging')"`:'';
     const vtxt=fmtVal(t.value);
+    const vlen=[...vtxt].length; // code points: 𝒪 counts as 1, point "(x, y)" by its glyphs
+    const vsz=vlen<=4?'':vlen<=6?' v-sm':vlen<=7?' v-xs':' v-xxs'; // shrink long values (EC points / 5+ digits) to fit the coin
     const a11y=p?` role="button" tabindex="0" aria-label="${t.label}，值 ${vtxt}${isMod?'，模數':''}：拖入式中空格或點選填入下一格"`:'';
     const modchip=isMod?`<span class="modtag" aria-hidden="true">mod</span>`:'';
     const lhtml=(t.label!==vtxt)?`<span class="l" title="${t.label}">${t.label}</span>`:'';
-    return `<div class="${cls}" data-id="${t.id}"${drag}${a11y} onclick="onTokenClick(${t.id})">${ord}${rm}${modchip}<span class="v">${vtxt}</span>${lhtml}</div>`;
+    return `<div class="${cls}" data-id="${t.id}"${drag}${a11y} onclick="onTokenClick(${t.id})">${ord}${rm}${modchip}<span class="v${vsz}">${vtxt}</span>${lhtml}</div>`;
   }).join('');
 }
 function renderHand(){
-  const p=state.pending, emax=energyMax();
+  const p=state.pending;
   document.getElementById('hand').innerHTML=state.hand.map((id,ix)=>{
-    const c=CARDS[id], el=EL[c.el], active=p&&p.cardId===id, afford=state.used+c.cost<=emax;
-    let cls='reagent'+(active?' active':'')+((!afford&&!active)?' disabled':'');
+    const c=CARDS[id], el=EL[c.el], active=p&&p.cardId===id;
+    let cls='reagent'+(active?' active':'');
     if(state.justCast===id)cls+=' cast'; if(state.justShake===id)cls+=' shake';
     const nextE=active?p.slots.findIndex(s=>!s):-1;
     const slots=c.inputs.map((r,si)=>{
@@ -1180,11 +1207,11 @@ function renderHand(){
       if(active){ if(p.slots[si]) scls+=' done'; else if(si===nextE) scls+=' now'; }
       return `<span class="${scls}">${si+1}. ${r}</span>`;
     }).join('');
-    return `<div class="${cls}" role="button" tabindex="0" aria-pressed="${!!active}" aria-disabled="${!afford&&!active}" aria-label="運算 ${c.name}，需要 ${c.inputs.join('、')}，耗預算 ${c.cost}（快捷鍵 ${ix+1}）" onclick="onCardClick('${id}')">
+    return `<div class="${cls}" role="button" tabindex="0" aria-pressed="${!!active}" aria-label="運算 ${c.name}，需要 ${c.inputs.join('、')}（快捷鍵 ${ix+1}）" onclick="onCardClick('${id}')">
       <span class="kbd">${ix+1}</span>
       <div class="cardart">${ART[c.el]}</div>
       <span class="seal" style="background:radial-gradient(circle at 38% 32%, ${el.c}, ${el.d})">${el.sym}</span>
-      <div class="nm">${c.name}<span class="cost">✎${c.cost}</span></div>
+      <div class="nm">${c.name}</div>
       <div class="ds">${c.desc}</div>
       <div class="slots" aria-hidden="true">${slots}</div>
       <div class="tag" style="color:${el.c}">${el.name} · ${c.cat}</div></div>`;
@@ -1223,7 +1250,6 @@ function renderLog(){
 function onCardClick(id){
   const c=CARDS[id];
   if(state.pending&&state.pending.cardId===id){ cancelPending(); return; }
-  if(state.used+c.cost>energyMax()){ sfxError(); toast('推導預算不足，無法施行此運算'); return; }
   state.pending={cardId:id, slots:Array(c.inputs.length).fill(null)}; render();
 }
 // click a board token → fills the next empty slot (fallback for drag)
@@ -1257,8 +1283,7 @@ function doTransmute(){
   const p=state.pending; if(!p||!p.slots.every(Boolean)) return;
   const c=CARDS[p.cardId], res=c.resolve(p.slots);
   if(res&&res.error){ sfxError(); toast(res.error); state.justShake=p.cardId; render(); state.justShake=null; return; }
-  state.history.push({tokens:state.tokens.map(t=>({...t})), used:state.used, log:state.log.slice(), transcript:state.transcript.slice()});
-  state.used+=c.cost;
+  state.history.push({tokens:state.tokens.map(t=>({...t})), log:state.log.slice(), transcript:state.transcript.slice()});
   const made=[]; (res.multi?res.multi:[res]).forEach(nt=>{ const t={id:++tokenCounter,value:nt.value,label:nt.label}; state.tokens.push(t); made.push(t); });
   const inL=p.slots.map(t=>t.label).join(', '), outL=made.map(t=>`${t.label} = ${fmtVal(t.value)}`).join('，');
   state.log.push(`<b>${c.name}</b>（${inL}）→ ${outL}`);
@@ -1268,13 +1293,13 @@ function doTransmute(){
   checkVictory();
 }
 function doUndo(){
-  if(state.undo<=0||state.history.length===0) return;
-  const s=state.history.pop(); state.tokens=s.tokens; state.used=s.used; state.log=s.log; if(s.transcript) state.transcript=s.transcript; state.undo--; state.pending=null;
+  if(state.history.length===0) return;
+  const s=state.history.pop(); state.tokens=s.tokens; state.log=s.log; if(s.transcript) state.transcript=s.transcript; state.pending=null;
   tokenCounter=Math.max(0,...state.tokens.map(t=>t.id)); render();
 }
 function removeToken(id){
   if(state.pending) return;
-  state.history.push({tokens:state.tokens.map(t=>({...t})), used:state.used, log:state.log.slice(), transcript:state.transcript.slice()});
+  state.history.push({tokens:state.tokens.map(t=>({...t})), log:state.log.slice(), transcript:state.transcript.slice()});
   state.tokens=state.tokens.filter(t=>t.id!==id); render();
 }
 
@@ -1282,14 +1307,16 @@ function removeToken(id){
 function checkVictory(){
   if(victoryImmune) return;
   const inst=state.curInst;
-  const matches=state.tokens.filter(t=>valEq(t.value,inst.target));
-  if(matches.length>=(inst.winCount||1)){ goldBurst(matches[matches.length-1].id); sfxBell(); setTimeout(onFloorClear,820); return; }
-  if(state.used+minHandCost()>energyMax()){ sfxError(); showOverlay('overlay-lose'); }
+  if(evalPredicate(inst.goal, state.tokens)){
+    const last=state.tokens.filter(t=>isGoalHighlight(t,inst.goal)).pop();
+    if(last) goldBurst(last.id);
+    sfxBell(); setTimeout(onFloorClear,820);
+  }
 }
 function stepLine(s){ return `${s.card}(${s.ins.join(', ')}) → ${s.outs.join('，')}`; }
 function onFloorClear(){
   const def=curDef(), inst=state.curInst, ch=chapterDef();
-  // archive this cleared floor's derivation for the proof export
+  const steps=stepCount(), par=inst.par, perfect=steps<=par;
   state.proofLog.push({chapter:ch.name, chapterOpus:ch.opus, name:def.name, opus:def.opus,
     targetText:inst.targetText, story:inst.story, steps:state.transcript.slice()});
   if(def.boss){
@@ -1298,12 +1325,17 @@ function onFloorClear(){
     const ov=document.getElementById('overlay-win');
     ov.querySelector('.latin').textContent = isLast?'Magnum Opus · Q.E.D.':`${ch.opus} · Demonstratum`;
     ov.querySelector('h2').textContent = isLast?'大功業完成':`${ch.name}之章 既成`;
+    ov.querySelector('.settle-line').textContent = `你花了 ${steps} 步（最佳解 ${par} 步）${perfect?' ★完美':''}`;
     ov.querySelector('p').textContent = isLast?'你走完了整條推導之鏈。命題得證。':'此章既成，新章已解封。返回大功業地圖，續煉下一階。';
     document.getElementById('transcript').innerHTML=state.transcript.map((s,i)=>`${i+1}. ${stepLine(s)}`).join('<br>');
     showOverlay('overlay-win');
-  } else showOverlay('overlay-reward');
+  } else {
+    const ov=document.getElementById('overlay-settle');
+    ov.querySelector('.settle-line').textContent = `你花了 ${steps} 步（最佳解 ${par} 步）${perfect?' ★完美':''}`;
+    showOverlay('overlay-settle');
+  }
 }
-function chooseReward(k){ if(k==='energy') state.energyBonus+=2; else state.undo+=2; closeOverlays(); loadFloor(state.floor+1); }
+function nextFloor(){ closeOverlays(); loadFloor(state.floor+1); }
 
 // ============================== Proof export (annotated transcript → print/PDF) ==============================
 // Operation-level mathematical annotations, one per card kind (concrete values already shown in the step line).
@@ -1490,7 +1522,7 @@ function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){ if(state&&state.pending)cancelPending(); closeOverlays(); return; }
   const ae=document.activeElement;
-  if((e.key==='Enter'||e.key===' ')&&ae&&ae.matches&&ae.matches('.coin,.reagent,.reward,.chap,.vslot')){ e.preventDefault(); ae.click(); return; }
+  if((e.key==='Enter'||e.key===' ')&&ae&&ae.matches&&ae.matches('.coin,.reagent,.chap,.vslot')){ e.preventDefault(); ae.click(); return; }
   if(!state||!document.getElementById('screen-game').classList.contains('active')) return;
   if(document.querySelector('.overlay.active')) return;
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){ e.preventDefault(); doUndo(); return; }
