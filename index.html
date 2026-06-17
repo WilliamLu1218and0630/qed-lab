@@ -99,9 +99,6 @@ button{font-family:inherit; cursor:pointer; color:inherit;}
 
 
 /* static workbench tip — fixed height, never shifts */
-.board-tip{display:flex; align-items:center; gap:.5rem; min-height:2rem; margin-bottom:.55rem; padding:0 .2rem;
-  font-family:'Taipei Sans TC Beta',sans-serif; font-size:.85rem; color:var(--muted); line-height:1.4;}
-.board-tip b{color:var(--gold);}
 /* transmutation vessel — FLOATING bottom drawer; takes no layout flow, never pushes content down */
 .vessel{position:fixed; left:50%; bottom:16px; z-index:60; width:min(720px,calc(100vw - 28px));
   flex-direction:column; gap:.55rem; padding:.8rem 1rem .9rem;
@@ -367,6 +364,7 @@ body[data-theme="cold"] .cardart{opacity:.2; mix-blend-mode:screen;}
       <button class="btn small disp" onclick="retryFloor()">重做</button>
       <button class="btn small disp" onclick="toggleTheme()">冷暖</button>
       <button class="btn small disp" id="btn-mute" onclick="toggleMute()">🔔</button>
+      <button class="btn small disp" onclick="showOverlay('overlay-help')" title="玩法說明" aria-label="玩法說明">？</button>
       <button class="btn small disp" onclick="toTitle()">離席</button>
     </div>
 
@@ -380,7 +378,6 @@ body[data-theme="cold"] .cardart{opacity:.2; mix-blend-mode:screen;}
         </div>
         <div class="panel hatch">
           <h3>Termini · 工作檯</h3>
-          <div class="board-tip cn">取一張<b>運算卡</b> → 把檯上的數<b>拖入</b>嬗變槽（或<b>點選</b>依序填入）。</div>
           <div class="board">
             <div class="tokens" id="tokens"></div>
           </div>
@@ -399,6 +396,18 @@ body[data-theme="cold"] .cardart{opacity:.2; mix-blend-mode:screen;}
 </div>
 
 <!-- overlays -->
+<div class="overlay" id="overlay-help">
+  <div class="ov-card">
+    <div class="latin">Regulae · 玩法</div>
+    <ul class="cn" style="text-align:left; margin:1.1rem 0 1.4rem; padding-left:1.2rem; line-height:1.7;">
+      <li>你逐步<b>推導</b>。檯上的圓牌是<b>數</b>，手中的卡是<b>數論運算</b>。</li>
+      <li>取一運算 → 把檯上的數<b>拖入</b>嬗變槽（或<b>點選</b>依序填入）→ 算出新的數。每一步都<b>實際計算驗證</b>，不能蒙混。</li>
+      <li>算出<b>目標數</b>即過關。每步運算耗<b>推導預算</b>，預算用盡即失敗（可<b>回溯</b>逆轉一步）。</li>
+      <li>循<b>大功業地圖</b>逐章推導：數論質料 → 古典密碼 → 公鑰系統，章末迎<b>王關</b>。</li>
+    </ul>
+    <button class="btn small disp" onclick="closeOverlays()">了解</button>
+  </div>
+</div>
 <div class="overlay" id="overlay-reward">
   <div class="ov-card">
     <div class="latin">Lemma Demonstratum</div>
